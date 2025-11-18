@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- New App Theme Colors -->
+    <color name="app_background">#F5F4FA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="accent">#7F53FF</color>
+    <color name="text_primary">#3C3358</color>
+    <color name="text_secondary">#8B85A1</color>
+
+    <!-- Badge Color -->
+    <color name="red">#FF0000</color>
+
+    <!-- Dark Theme -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_text_primary">#E0E0E0</color>
+    <color name="dark_text_secondary">#A0A0A0</color>
+
+</resources>

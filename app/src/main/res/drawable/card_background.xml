@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền bo góc cho thẻ sản phẩm -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/dark_surface" />
+    <corners android:radius="12dp" />
+</shape>

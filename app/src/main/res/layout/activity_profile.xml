@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/app_background"> <!-- SỬA: Nền trắng -->
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/profile_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingBottom="24dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@android:drawable/sym_def_app_icon" 
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/accent"/>
+
+                <TextView
+                    android:id="@+id/tv_change_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="THAY ẢNH ĐẠI DIỆN"
+                    android:textColor="@color/accent"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Họ"
+                android:textColor="@color/text_secondary"/>
+
+            <EditText
+                android:id="@+id/et_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/text_primary"
+                android:padding="12dp"
+                android:enabled="true"/> <!-- SỬA: Cho phép nhập liệu -->
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/text_secondary"/>
+
+            <EditText
+                android:id="@+id/et_last_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/text_primary"
+                android:padding="12dp"
+                android:enabled="true"/> <!-- SỬA: Cho phép nhập liệu -->
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/text_secondary"/>
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/text_secondary" 
+                android:padding="12dp"
+                android:enabled="false"/> <!-- Email không cho sửa -->
+
+            <!-- XÓA: Đã loại bỏ Tên đăng nhập và Mật khẩu -->
+
+            <Button
+                android:id="@+id/btn_save_changes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lưu thay đổi"
+                android:layout_marginTop="32dp"/>
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đăng xuất"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="@color/red"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

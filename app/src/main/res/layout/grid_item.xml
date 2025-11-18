@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_margin="8dp"
+    android:padding="12dp"
+    android:background="@drawable/card_background"> <!-- Nền bo góc -->
+
+    <ImageView
+        android:id="@+id/gridImage"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/shoe_placeholder" />
+
+    <TextView
+        android:id="@+id/gridText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên Giày"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginTop="12dp"/>
+
+    <TextView
+        android:id="@+id/gridPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Giá tiền"
+        android:textSize="14sp"
+        android:textColor="@color/accent"
+        android:layout_marginTop="4dp"/>
+</LinearLayout>
