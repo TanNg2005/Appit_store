@@ -11,7 +11,7 @@
         android:id="@+id/textWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sản phẩm nổi bật"
+        android:text="@string/featured_products"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"

@@ -9,7 +9,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class AdminOrdersActivity extends AppCompatActivity implements AdminOrdersAdapter.OnOrderClickListener {
+public class AdminOrdersActivity extends BaseActivity implements AdminOrdersAdapter.OnOrderClickListener {
 
     private static final String TAG = "AdminOrdersActivity";
     private RecyclerView recyclerView;
@@ -46,6 +45,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
 
         Toolbar toolbar = findViewById(R.id.admin_orders_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.nav_manage_orders);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.recycler_view_admin_orders);

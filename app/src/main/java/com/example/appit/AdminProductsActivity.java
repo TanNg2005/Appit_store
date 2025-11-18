@@ -3,7 +3,6 @@ package com.example.appit;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +14,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminProductsActivity extends AppCompatActivity implements AdminProductsAdapter.ProductInteractionListener {
+public class AdminProductsActivity extends BaseActivity implements AdminProductsAdapter.ProductInteractionListener {
 
     private RecyclerView recyclerView;
     private AdminProductsAdapter adapter;
@@ -31,6 +30,7 @@ public class AdminProductsActivity extends AppCompatActivity implements AdminPro
 
         Toolbar toolbar = findViewById(R.id.admin_products_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.nav_manage_products);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.recycler_view_admin_products);

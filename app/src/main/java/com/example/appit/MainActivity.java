@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
     private DrawerLayout drawerLayout;
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             DocumentReference userRef = db.collection("users").document(currentUser.getUid());
             userRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists() && documentSnapshot.contains("isAdmin") && documentSnapshot.getBoolean("isAdmin") == true) {
-                    navigationView.getMenu().findItem(R.id.admin_panel_group).setVisible(true);
+                    navigationView.getMenu().setGroupVisible(R.id.admin_panel_group, true);
                 }
             });
         }
@@ -265,6 +265,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_admin_products) {
             // SỬA LỖI: Mở màn hình quản lý sản phẩm
             startActivity(new Intent(this, AdminProductsActivity.class));
+        } else if (id == R.id.nav_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_logout) {
             logoutUser();
         }

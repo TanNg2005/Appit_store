@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">appit</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Navigation Drawer -->
+    <string name="nav_home">Home</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_account">Account</string>
+    <string name="nav_filter">Filter Products</string>
+    <string name="admin_panel">Admin Panel</string>
+    <string name="nav_manage_orders">Manage Orders</string>
+    <string name="nav_manage_products">Manage Products</string>
+    <string name="system">System</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_logout">Logout</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_theme">Theme</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_push_notifications">Push Notifications</string>
+    <string name="settings_promo_notifications">Promotion Notifications</string>
+    <string name="settings_order_notifications">Order Status Notifications</string>
+    <string name="settings_new_product_notifications">New Product Notifications</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_full_name">Full Name</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_phone">Phone</string>
+    <string name="profile_address">Shipping Address</string>
+    <string name="profile_save_changes">Save Changes</string>
+
+    <!-- Filter Screen -->
+    <string name="filter_by_brand">Filter by brand</string>
+    <string name="filter_by_category">Filter by category</string>
+    <string name="filter_by_rating">Minimum rating</string>
+    <string name="filter_apply">Apply</string>
+    <string name="filter_clear">Clear filters</string>
+
+    <!-- Language Change Dialog -->
+    <string name="language_change_title">Change Language</string>
+    <string name="language_change_message">The application needs to be restarted to apply the new language. Press \"Got it\" to exit the application.</string>
+    <string name="language_change_confirm">Got it</string>
+    <string name="language_change_cancel">Cancel</string>
+
+    <!-- Main Screen -->
+    <string name="featured_products">Featured Products</string>
+
+</resources>

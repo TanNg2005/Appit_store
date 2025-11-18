@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -35,6 +36,7 @@
         <activity android:name=".AdminOrdersActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".AdminProductsActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".AdminEditProductActivity" android:exported="false" android:parentActivityName=".AdminProductsActivity" />
+        <activity android:name=".SettingsActivity" android:exported="false" android:parentActivityName=".MainActivity" />
 
         <!-- Payment Flow Activities -->
         <activity

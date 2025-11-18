@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class FilterActivity extends AppCompatActivity {
+public class FilterActivity extends BaseActivity {
 
     private FirebaseFirestore db;
     private List<Product> allProducts = new ArrayList<>();
@@ -48,7 +47,7 @@ public class FilterActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.filter_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Lọc sản phẩm");
+        getSupportActionBar().setTitle(R.string.nav_filter);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         brandChipGroup = findViewById(R.id.chipgroup_brand);

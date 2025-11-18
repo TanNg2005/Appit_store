@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:text="Tên Giày"
         android:textSize="16sp"
-        android:textColor="@color/text_primary"
+        android:textColor="@android:color/white"
         android:textStyle="bold"
         android:maxLines="2"
         android:ellipsize="end"
@@ -33,6 +33,6 @@
         android:layout_height="wrap_content"
         android:text="Giá tiền"
         android:textSize="14sp"
-        android:textColor="@color/accent"
+        android:textColor="@android:color/white"
         android:layout_marginTop="4dp"/>
 </LinearLayout>

@@ -2,4 +2,49 @@
     <string name="app_name">appit</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Navigation Drawer -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_cart">Giỏ hàng</string>
+    <string name="nav_account">Tài khoản</string>
+    <string name="nav_filter">Lọc sản phẩm</string>
+    <string name="admin_panel">Admin Panel</string>
+    <string name="nav_manage_orders">Quản lý đơn hàng</string>
+    <string name="nav_manage_products">Quản lý sản phẩm</string>
+    <string name="system">Hệ thống</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="nav_logout">Đăng xuất</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_theme">Giao diện</string>
+    <string name="settings_dark_mode">Chế độ tối</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_push_notifications">Thông báo đẩy</string>
+    <string name="settings_promo_notifications">Thông báo khuyến mãi</string>
+    <string name="settings_order_notifications">Thông báo tình trạng đơn hàng</string>
+    <string name="settings_new_product_notifications">Thông báo về sản phẩm mới</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_full_name">Họ và tên</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_phone">Số điện thoại</string>
+    <string name="profile_address">Địa chỉ nhận hàng</string>
+    <string name="profile_save_changes">Lưu thay đổi</string>
+
+    <!-- Filter Screen -->
+    <string name="filter_by_brand">Lọc theo hãng</string>
+    <string name="filter_by_category">Lọc theo danh mục</string>
+    <string name="filter_by_rating">Đánh giá tối thiểu</string>
+    <string name="filter_apply">Áp dụng</string>
+    <string name="filter_clear">Xóa bộ lọc</string>
+
+    <!-- Language Change Dialog -->
+    <string name="language_change_title">Thay đổi ngôn ngữ</string>
+    <string name="language_change_message">Ứng dụng cần được khởi động lại để áp dụng ngôn ngữ mới. Nhấn \"Đã rõ\" để thoát ứng dụng.</string>
+    <string name="language_change_confirm">Đã rõ</string>
+    <string name="language_change_cancel">Hủy</string>
+
+    <!-- Main Screen -->
+    <string name="featured_products">Sản phẩm nổi bật</string>
+
 </resources>
