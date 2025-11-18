@@ -15,6 +15,32 @@
             android:title="Tài khoản" />
     </group>
 
+    <item android:title="Công cụ">
+        <menu>
+            <item
+                android:id="@+id/nav_filter_advanced"
+                android:icon="@android:drawable/ic_menu_search"
+                android:title="Lọc sản phẩm" />
+        </menu>
+    </item>
+
+    <!-- Admin Panel - Hidden by default -->
+    <item
+        android:id="@+id/admin_panel_group"
+        android:title="Quản trị viên"
+        android:visible="false">
+        <menu>
+            <item
+                android:id="@+id/nav_admin_orders"
+                android:icon="@android:drawable/ic_menu_agenda"
+                android:title="Quản lý đơn hàng" />
+            <item
+                android:id="@+id/nav_admin_products"
+                android:icon="@android:drawable/ic_menu_slideshow"
+                android:title="Quản lý sản phẩm" />
+        </menu>
+    </item>
+
     <item android:title="Hệ thống">
         <menu>
             <item

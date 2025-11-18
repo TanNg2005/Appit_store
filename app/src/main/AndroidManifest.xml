@@ -30,6 +30,11 @@
         <activity android:name=".CartActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".ProfileActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".OrderActivity" android:exported="false" android:parentActivityName=".CartActivity" />
+        <activity android:name=".FilterActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".NotificationActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".AdminOrdersActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".AdminProductsActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".AdminEditProductActivity" android:exported="false" android:parentActivityName=".AdminProductsActivity" />
 
         <!-- Payment Flow Activities -->
         <activity

@@ -1,78 +1,91 @@
 package com.example.appit;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class OrderActivity extends AppCompatActivity {
 
-    private TextView orderIdTextView;
-    private TextView userEmailTextView;
-    private TextView totalAmountTextView;
-    private RecyclerView orderItemsRecyclerView;
-    private CartAdapter adapter;
-    private Button btnFinish;
+    private RecyclerView recyclerView;
+    private OrderItemsAdapter adapter;
+    private TextView totalPriceTextView, orderStatusTextView, orderDateTextView, shippingAddressTextView;
+    private String orderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
-        // --- Setup Toolbar ---
         Toolbar toolbar = findViewById(R.id.order_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Hóa đơn");
+        getSupportActionBar().setTitle("Chi tiết Đơn hàng");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // --- Get Views ---
-        orderIdTextView = findViewById(R.id.order_id);
-        userEmailTextView = findViewById(R.id.order_user_email);
-        totalAmountTextView = findViewById(R.id.order_total_amount);
-        orderItemsRecyclerView = findViewById(R.id.order_items_recycler_view);
-        btnFinish = findViewById(R.id.btn_finish);
+        recyclerView = findViewById(R.id.order_recycler_view);
+        totalPriceTextView = findViewById(R.id.order_total_price);
+        orderStatusTextView = findViewById(R.id.order_status);
+        orderDateTextView = findViewById(R.id.order_date);
+        shippingAddressTextView = findViewById(R.id.order_shipping_address);
 
-        // --- Get Data from Intent ---
-        String orderId = getIntent().getStringExtra("ORDER_ID");
-        double totalAmount = getIntent().getDoubleExtra("TOTAL_AMOUNT", 0.0);
+        orderId = getIntent().getStringExtra("ORDER_ID");
 
-        // --- Display User Info ---
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            userEmailTextView.setText(currentUser.getEmail());
+        if (orderId != null && !orderId.isEmpty()) {
+            loadOrderDetails();
+        } else {
+            Toast.makeText(this, "Không tìm thấy thông tin đơn hàng", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    private void loadOrderDetails() {
+        FirebaseFirestore.getInstance().collection("orders").document(orderId).get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    Order order = documentSnapshot.toObject(Order.class);
+                    if (order != null) {
+                        displayOrderDetails(order);
+                    }
+                }
+            });
+    }
+
+    private void displayOrderDetails(Order order) {
+        // Display general order info
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        totalPriceTextView.setText(format.format(order.getTotalPrice()));
+        orderStatusTextView.setText("Trạng thái: " + order.getStatus());
+
+        if (order.getOrderDate() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            orderDateTextView.setText("Ngày đặt: " + sdf.format(order.getOrderDate()));
+        }
+        
+        if(order.getShippingAddress() != null){
+            User.ShippingAddress address = order.getShippingAddress();
+            shippingAddressTextView.setText(String.format("Giao đến: %s, %s, %s", address.getStreet(), address.getDistrict(), address.getCity()));
         }
 
-        // --- Display Order Info ---
-        orderIdTextView.setText(orderId);
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        totalAmountTextView.setText(format.format(totalAmount));
+        // Setup RecyclerView for order items
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new OrderItemsAdapter(this, order.getItems() != null ? order.getItems() : new ArrayList<>());
+        recyclerView.setAdapter(adapter);
+    }
 
-        // --- Display Order Items ---
-        orderItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // In this simulation, we get items directly from the cart manager
-        adapter = new CartAdapter(this, CartManager.getInstance().getCartItems());
-        orderItemsRecyclerView.setAdapter(adapter);
-
-        // --- Finish Button ---
-        btnFinish.setOnClickListener(v -> {
-            // Clear cart after viewing the order
-            CartManager.getInstance().clearCart();
-
-            // Go back to the main activity
-            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish(); // Close order activity
-        });
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

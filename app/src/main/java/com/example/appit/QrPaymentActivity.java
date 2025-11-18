@@ -71,7 +71,7 @@ public class QrPaymentActivity extends AppCompatActivity {
     }
 
     private void startVisualCountdown() {
-        visualCountDownTimer = new CountDownTimer(60000, 1000) { // Đếm ngược 60 giây
+        visualCountDownTimer = new CountDownTimer(300000, 1000) { // Đếm ngược 5 phút
             @Override
             public void onTick(long millisUntilFinished) {
                 long seconds = millisUntilFinished / 1000;

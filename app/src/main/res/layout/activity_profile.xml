@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/app_background"> <!-- SỬA: Nền trắng -->
+    tools:context=".ProfileActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/profile_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/surface"/>
+        android:background="?attr/colorPrimary"
+        app:title="Hồ sơ"
+        app:titleTextColor="@android:color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,102 +23,135 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:paddingBottom="24dp">
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_image"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:src="@android:drawable/sym_def_app_icon" 
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="@color/accent"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_profile" 
+                    app:civ_border_color="#FF000000" 
+                    app:civ_border_width="2dp" />
 
-                <TextView
-                    android:id="@+id/tv_change_avatar"
+                <ImageButton
+                    android:id="@+id/btn_edit_profile_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="THAY ẢNH ĐẠI DIỆN"
-                    android:textColor="@color/accent"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/circle_background"
+                    android:padding="8dp"
+                    android:src="@android:drawable/ic_menu_edit" />
+            </FrameLayout>
+
+            <!-- Full Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Họ và tên" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edit_text_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false" />
+                <ImageButton
+                    android:id="@+id/btn_edit_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_edit" />
             </LinearLayout>
 
+            <!-- Email -->
             <TextView
-                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Họ"
-                android:textColor="@color/text_secondary"/>
-
-            <EditText
-                android:id="@+id/et_first_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edit_text_background"
-                android:textColor="@color/text_primary"
-                android:padding="12dp"
-                android:enabled="true"/> <!-- SỬA: Cho phép nhập liệu -->
-
-            <TextView
-                style="@style/TextAppearance.AppCompat.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tên"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/text_secondary"/>
-
+                android:text="Email" />
             <EditText
-                android:id="@+id/et_last_name"
+                android:id="@+id/edit_text_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edit_text_background"
-                android:textColor="@color/text_primary"
-                android:padding="12dp"
-                android:enabled="true"/> <!-- SỬA: Cho phép nhập liệu -->
+                android:enabled="false" />
 
+            <!-- Phone -->
             <TextView
-                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/text_secondary"/>
-
-            <EditText
-                android:id="@+id/et_email"
+                android:text="Số điện thoại" />
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edit_text_background"
-                android:textColor="@color/text_secondary" 
-                android:padding="12dp"
-                android:enabled="false"/> <!-- Email không cho sửa -->
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edit_text_phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false" />
+                <ImageButton
+                    android:id="@+id/btn_edit_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_edit" />
+            </LinearLayout>
 
-            <!-- XÓA: Đã loại bỏ Tên đăng nhập và Mật khẩu -->
+            <!-- Address -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Địa chỉ nhận hàng" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edit_text_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false" />
+                <ImageButton
+                    android:id="@+id/btn_edit_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_edit" />
+            </LinearLayout>
 
             <Button
-                android:id="@+id/btn_save_changes"
+                android:id="@+id/btn_save_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lưu thay đổi"
-                android:layout_marginTop="32dp"/>
+                android:layout_marginTop="32dp"
+                android:text="Lưu thay đổi" />
 
             <Button
                 android:id="@+id/btn_logout"
-                android:layout_width="match_parent"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
                 android:text="Đăng xuất"
-                android:layout_marginTop="8dp"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:textColor="@color/red"/>
+                android:textColor="@color/design_default_color_error" />
 
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

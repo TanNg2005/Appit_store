@@ -1,0 +1,39 @@
+{
+  "notifications": [
+    {
+      "userId": "u5yfxoBIspXqeqaX76WdshBLs9h1",
+      "title": "🎉 Chào mừng bạn đến với Appit Store!",
+      "message": "Cảm ơn bạn đã đăng ký. Hãy bắt đầu khám phá hàng ngàn sản phẩm tuyệt vời ngay thôi.",
+      "isRead": true,
+      "timestamp": "2024-05-20T10:00:00Z"
+    },
+    {
+      "userId": "u5yfxoBIspXqeqaX76WdshBLs9h1",
+      "title": "📦 Đơn hàng #12345 đã được xác nhận",
+      "message": "Đơn hàng của bạn đã được xác nhận và đang chờ xử lý. Chúng tôi sẽ thông báo cho bạn khi đơn hàng bắt đầu được giao.",
+      "isRead": false,
+      "timestamp": "2024-05-21T14:30:00Z"
+    },
+    {
+      "userId": "u5yfxoBIspXqeqaX76WdshBLs9h1",
+      "title": "🔥 Giảm giá 50% cho phụ kiện Apple",
+      "message": "Duy nhất hôm nay! Giảm giá cực sốc cho toàn bộ phụ kiện chính hãng Apple. Đừng bỏ lỡ!",
+      "isRead": false,
+      "timestamp": "2024-05-22T09:00:00Z"
+    },
+    {
+      "userId": "roFztOfBg9OxaszImrdJA2ydCDB2",
+      "title": "🎉 Chào mừng bạn đến với Appit Store!",
+      "message": "Cảm ơn bạn đã đăng ký. Hãy bắt đầu khám phá hàng ngàn sản phẩm tuyệt vời ngay thôi.",
+      "isRead": true,
+      "timestamp": "2024-05-22T11:00:00Z"
+    },
+    {
+      "userId": "roFztOfBg9OxaszImrdJA2ydCDB2",
+      "title": "🚚 Đơn hàng của bạn đang được giao",
+      "message": "Đơn hàng #54321 của bạn đã được bàn giao cho đơn vị vận chuyển và đang trên đường đến với bạn.",
+      "isRead": false,
+      "timestamp": "2024-05-22T18:00:00Z"
+    }
+  ]
+}

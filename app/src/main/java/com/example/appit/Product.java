@@ -6,12 +6,12 @@ import java.util.List;
 public class Product {
 
     @Exclude
-    private String id; // Firestore Document ID
+    private String documentId; // Firestore Document ID
 
-    // --- Các trường chính ---
+    private Long id; // This will map to the numeric 'id' field in Firestore
     private String title;
     private String description;
-    private String price; // SỬA LỖI: Trả về kiểu String để khớp với Firestore
+    private String price;
     private double discountPercentage;
     private double rating;
     private int stock;
@@ -19,8 +19,6 @@ public class Product {
     private String category;
     private String thumbnail;
     private List<String> images;
-
-    // --- Các trường thông tin khác ---
     private String warrantyInformation;
     private String shippingInformation;
     private String availabilityStatus;
@@ -29,14 +27,14 @@ public class Product {
     private Dimensions dimensions;
     private List<Review> reviews;
 
-    // Constructor rỗng cần thiết cho Firestore
     public Product() {}
 
-    // --- Getters and Setters ---
-
     @Exclude
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getDocumentId() { return documentId; }
+    public void setDocumentId(String documentId) { this.documentId = documentId; }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -44,8 +42,8 @@ public class Product {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getPrice() { return price; } // SỬA LỖI: Trả về kiểu String
-    public void setPrice(String price) { this.price = price; } // SỬA LỖI: Tham số là String
+    public String getPrice() { return price; }
+    public void setPrice(String price) { this.price = price; }
 
     public double getDiscountPercentage() { return discountPercentage; }
     public void setDiscountPercentage(double discountPercentage) { this.discountPercentage = discountPercentage; }
@@ -89,7 +87,6 @@ public class Product {
     public List<Review> getReviews() { return reviews; }
     public void setReviews(List<Review> reviews) { this.reviews = reviews; }
 
-    // --- Lớp con cho Dimensions ---
     public static class Dimensions {
         private double width;
         private double height;
@@ -107,7 +104,6 @@ public class Product {
         public void setDepth(double depth) { this.depth = depth; }
     }
 
-    // --- Lớp con cho Review ---
     public static class Review {
         private int rating;
         private String comment;

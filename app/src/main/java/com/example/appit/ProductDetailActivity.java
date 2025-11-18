@@ -1,6 +1,7 @@
 package com.example.appit;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
+    private static final String TAG = "ProductDetailActivity";
     private FirebaseFirestore db;
     private Product currentProduct;
 
@@ -35,38 +37,49 @@ public class ProductDetailActivity extends AppCompatActivity {
             if (currentProduct != null) {
                 CartManager.getInstance().addProduct(currentProduct);
                 Toast.makeText(this, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Không thể thêm sản phẩm, vui lòng thử lại", Toast.LENGTH_SHORT).show();
             }
         });
 
-        String productId = getIntent().getStringExtra("PRODUCT_ID");
-        if (productId != null && !productId.isEmpty()) {
-            loadProductDetails(productId);
+        // The ID passed from MainActivity/GridAdapter should be the Firestore Document ID
+        String documentId = getIntent().getStringExtra("PRODUCT_ID");
+        if (documentId != null && !documentId.isEmpty()) {
+            loadProductDetails(documentId);
         } else {
-            Toast.makeText(this, "Error: No product ID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error: Không tìm thấy ID sản phẩm", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
-    private void loadProductDetails(String productId) {
+    private void loadProductDetails(String documentId) {
         ProgressBar progressBar = findViewById(R.id.productProgressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-        db.collection("products").document(productId).get()
+        db.collection("products").document(documentId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     progressBar.setVisibility(View.GONE);
                     if (documentSnapshot.exists()) {
-                        currentProduct = documentSnapshot.toObject(Product.class);
-                        if (currentProduct != null) {
-                            currentProduct.setId(documentSnapshot.getId()); // Don't forget to set the ID
-                            populateUI(currentProduct);
+                        try {
+                            currentProduct = documentSnapshot.toObject(Product.class);
+                            if (currentProduct != null) {
+                                // CORRECT FIX: Set the documentId, not the numeric id.
+                                // The numeric 'id' field is already mapped by toObject().
+                                currentProduct.setDocumentId(documentSnapshot.getId());
+                                populateUI(currentProduct);
+                            }
+                        } catch (Exception e) {
+                             Log.e(TAG, "Error parsing product object", e);
+                             Toast.makeText(ProductDetailActivity.this, "Lỗi phân tích dữ liệu sản phẩm", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(ProductDetailActivity.this, "Product not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProductDetailActivity.this, "Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ProductDetailActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error loading product details", e);
+                    Toast.makeText(ProductDetailActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -86,10 +99,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(product.getTitle());
         textName.setText(product.getTitle());
-
-        // SỬA LỖI: price bây giờ là String, hiển thị trực tiếp
         textPrice.setText(product.getPrice());
-
         textDescription.setText(product.getDescription());
 
         if (product.getImages() != null && !product.getImages().isEmpty()) {
@@ -101,14 +111,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         textBrand.setText("Thương hiệu: " + product.getBrand());
         textCategory.setText("Danh mục: " + product.getCategory());
         textStock.setText("Trong kho: " + product.getStock());
-        textRating.setText(String.format("Đánh giá: %.2f / 5", product.getRating()));
+        textRating.setText(String.format(java.util.Locale.US, "Đánh giá: %.2f / 5", product.getRating()));
         textWarranty.setText("Bảo hành: " + product.getWarrantyInformation());
         textShipping.setText("Vận chuyển: " + product.getShippingInformation());
         textReturn.setText("Chính sách đổi trả: " + product.getReturnPolicy());
 
         if (product.getDimensions() != null) {
             Product.Dimensions dims = product.getDimensions();
-            String dimText = String.format("Kích thước: %.2f x %.2f x %.2f cm", dims.getWidth(), dims.getHeight(), dims.getDepth());
+            String dimText = String.format(java.util.Locale.US, "Kích thước: %.2f x %.2f x %.2f cm", dims.getWidth(), dims.getHeight(), dims.getDepth());
             textDimensions.setText(dimText);
         }
     }

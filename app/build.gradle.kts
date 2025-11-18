@@ -41,12 +41,13 @@ dependencies {
     implementation(libs.constraintlayout)
 
     // SỬA LỖI: Thêm Firebase Bill of Materials (BoM) để quản lý phiên bản
-    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
 
     // Khai báo các thư viện Firebase mà không cần phiên bản
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-database")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

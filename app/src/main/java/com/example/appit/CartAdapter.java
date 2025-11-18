@@ -4,9 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -38,33 +41,40 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         holder.name.setText(product.getTitle());
         holder.price.setText(product.getPrice());
-        holder.quantity.setText("Số lượng: " + cartItem.getQuantity());
+        holder.quantity.setText(String.valueOf(cartItem.getQuantity()));
 
-        Glide.with(context)
-                .load(product.getThumbnail())
-                .into(holder.image);
+        Glide.with(context).load(product.getThumbnail()).into(holder.image);
 
-        holder.removeButton.setOnClickListener(v -> {
-            int currentPosition = holder.getAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION) {
-                CartItem itemToRemove = cartItems.get(currentPosition);
-                cartManager.removeProduct(itemToRemove.getProduct());
-                notifyItemRemoved(currentPosition);
-                notifyItemRangeChanged(currentPosition, cartItems.size());
-                
-                // Cập nhật lại tổng tiền và badge trên MainActivity
-                if (context instanceof CartActivity) {
-                    ((CartActivity) context).updateTotalPrice();
-                }
-                if (context instanceof OrderActivity) {
-                    // Không cần làm gì ở màn hình hóa đơn
-                } else {
-                     // Cập nhật badge ở MainActivity
-                    if(context instanceof MainActivity) {
-                       ((MainActivity) context).updateCartBadge();
-                    }    
-                } 
+        holder.checkBox.setOnCheckedChangeListener(null);
+        holder.checkBox.setChecked(cartItem.isSelected());
+        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            cartItem.setSelected(isChecked);
+            if (context instanceof CartActivity) {
+                ((CartActivity) context).updateTotalPrice();
             }
+        });
+
+        // Logic nút Tăng số lượng
+        holder.increaseButton.setOnClickListener(v -> {
+            int currentQuantity = cartItem.getQuantity();
+            if (currentQuantity < product.getStock()) {
+                cartManager.updateQuantity(product, currentQuantity + 1);
+            } else {
+                Toast.makeText(context, "Số lượng đã đạt tối đa trong kho", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Logic nút Giảm số lượng
+        holder.decreaseButton.setOnClickListener(v -> {
+            int currentQuantity = cartItem.getQuantity();
+            if (currentQuantity > 1) {
+                cartManager.updateQuantity(product, currentQuantity - 1);
+            } 
+        });
+
+        // Logic nút Xóa sản phẩm
+        holder.removeButton.setOnClickListener(v -> {
+            cartManager.removeProduct(product);
         });
     }
 
@@ -76,15 +86,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView name, price, quantity;
-        ImageButton removeButton;
+        ImageButton removeButton, increaseButton, decreaseButton;
+        CheckBox checkBox;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.cart_item_image);
             name = itemView.findViewById(R.id.cart_item_name);
             price = itemView.findViewById(R.id.cart_item_price);
-            quantity = itemView.findViewById(R.id.cart_item_quantity);
+            quantity = itemView.findViewById(R.id.text_quantity); // Sửa ID
             removeButton = itemView.findViewById(R.id.btn_remove_from_cart);
+            increaseButton = itemView.findViewById(R.id.btn_increase_quantity); // Thêm ID mới
+            decreaseButton = itemView.findViewById(R.id.btn_decrease_quantity); // Thêm ID mới
+            checkBox = itemView.findViewById(R.id.cart_item_checkbox);
         }
     }
 }
