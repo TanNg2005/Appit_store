@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -69,6 +70,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         recyclerView.setAdapter(adapter);
 
         loadProducts();
+
+        // Handle back press to close drawer if open
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
 
     @Override
@@ -227,15 +241,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             navHeaderEmail.setText(currentUser.getEmail());
         } else {
             navHeaderEmail.setText("Vui lòng đăng nhập");
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 
