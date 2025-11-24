@@ -40,7 +40,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         Product product = cartItem.getProduct();
 
         holder.name.setText(product.getTitle());
-        holder.price.setText(product.getPrice());
+        
+        // Thêm đuôi VND
+        String priceWithUnit = product.getPrice();
+        if (!priceWithUnit.toLowerCase().contains("vnd")) {
+             priceWithUnit += " VND";
+        }
+        holder.price.setText(priceWithUnit);
+        
         holder.quantity.setText(String.valueOf(cartItem.getQuantity()));
 
         Glide.with(context).load(product.getThumbnail()).into(holder.image);
@@ -94,10 +101,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             image = itemView.findViewById(R.id.cart_item_image);
             name = itemView.findViewById(R.id.cart_item_name);
             price = itemView.findViewById(R.id.cart_item_price);
-            quantity = itemView.findViewById(R.id.text_quantity); // Sửa ID
+            quantity = itemView.findViewById(R.id.text_quantity); 
             removeButton = itemView.findViewById(R.id.btn_remove_from_cart);
-            increaseButton = itemView.findViewById(R.id.btn_increase_quantity); // Thêm ID mới
-            decreaseButton = itemView.findViewById(R.id.btn_decrease_quantity); // Thêm ID mới
+            increaseButton = itemView.findViewById(R.id.btn_increase_quantity); 
+            decreaseButton = itemView.findViewById(R.id.btn_decrease_quantity);
             checkBox = itemView.findViewById(R.id.cart_item_checkbox);
         }
     }

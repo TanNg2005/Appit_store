@@ -1,38 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
     android:layout_margin="8dp"
-    android:padding="12dp"
-    android:background="@drawable/card_background"> <!-- Nền bo góc -->
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <ImageView
-        android:id="@+id/gridImage"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/shoe_placeholder" />
-
-    <TextView
-        android:id="@+id/gridText"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tên Giày"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:layout_marginTop="12dp"/>
+        android:orientation="vertical"
+        android:background="@color/surface">
 
-    <TextView
-        android:id="@+id/gridPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Giá tiền"
-        android:textSize="14sp"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="4dp"/>
-</LinearLayout>
+        <!-- Hình ảnh sản phẩm -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="6dp">
+            
+            <ImageView
+                android:id="@+id/gridImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/shoe_placeholder" />
+                
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Phần thông tin -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="12dp">
+
+            <!-- Tên sản phẩm -->
+            <TextView
+                android:id="@+id/gridText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:text="Tên Giày"
+                android:textSize="16sp"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:gravity="top"/>
+
+            <!-- Đánh giá sao -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@android:drawable/btn_star_big_on"
+                    app:tint="#FFC107" />
+
+                <TextView
+                    android:id="@+id/gridRatingText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="4.5"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <!-- Giá tiền -->
+            <TextView
+                android:id="@+id/gridPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Giá tiền"
+                android:textSize="14sp"
+                android:textColor="@color/accent"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

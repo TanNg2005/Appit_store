@@ -65,7 +65,13 @@ public class AdminProductsAdapter extends RecyclerView.Adapter<AdminProductsAdap
 
         public void bind(final Product product, final ProductInteractionListener listener) {
             productTitle.setText(product.getTitle());
-            productPrice.setText("Giá: " + product.getPrice());
+            
+            String priceWithUnit = product.getPrice();
+            if (!priceWithUnit.toLowerCase().contains("vnd")) {
+                priceWithUnit += " VND";
+            }
+            productPrice.setText("Giá: " + priceWithUnit);
+            
             productStock.setText("Kho: " + product.getStock());
 
             Glide.with(itemView.getContext())

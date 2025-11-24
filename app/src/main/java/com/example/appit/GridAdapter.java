@@ -35,7 +35,13 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ProductViewHol
         Product product = productList.get(position);
 
         holder.nameView.setText(product.getTitle());
-        holder.priceView.setText(product.getPrice());
+        
+        // THÊM ĐUÔI "VND"
+        String priceWithUnit = product.getPrice() + " VND";
+        holder.priceView.setText(priceWithUnit);
+
+        // SET ĐÁNH GIÁ (Tạm thời random hoặc để cố định vì chưa có data thực)
+        holder.ratingView.setText("4.5"); // Hoặc lấy từ product.getRating() nếu có
 
         Glide.with(context)
                 .load(product.getThumbnail())
@@ -44,7 +50,6 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ProductViewHol
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
-            // SỬA LỖI: Gửi đi Document ID của Firestore
             intent.putExtra("PRODUCT_ID", product.getDocumentId());
             context.startActivity(intent);
         });
@@ -59,12 +64,14 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ProductViewHol
         ImageView imageView;
         TextView nameView;
         TextView priceView;
+        TextView ratingView; // Thêm view đánh giá
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.gridImage);
             nameView = itemView.findViewById(R.id.gridText);
             priceView = itemView.findViewById(R.id.gridPrice);
+            ratingView = itemView.findViewById(R.id.gridRatingText); // Ánh xạ view mới
         }
     }
 }

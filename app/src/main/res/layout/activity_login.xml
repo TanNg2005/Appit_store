@@ -17,34 +17,44 @@
         android:textColor="@color/text_primary"
         android:layout_marginBottom="30dp"/>
 
-    <EditText
-        android:id="@+id/email"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:background="@drawable/edittext_background"
-        android:paddingHorizontal="15dp"
-        android:layout_marginBottom="15dp"/>
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/password"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
         android:hint="Password"
-        android:inputType="textPassword"
-        android:background="@drawable/edittext_background"
-        android:paddingHorizontal="15dp"
-        android:layout_marginBottom="25dp"/>
+        app:endIconMode="password_toggle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <Button
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:text="Login"
-        app:backgroundTint="@color/accent"
         android:textColor="@color/white"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:cornerRadius="8dp"
+        app:backgroundTint="@color/accent"/>
 
     <TextView
         android:id="@+id/btnGoToRegister"

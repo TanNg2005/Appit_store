@@ -2,6 +2,7 @@ package com.example.appit;
 
 import com.google.firebase.firestore.Exclude;
 import java.util.List;
+import java.util.Date; // Added Date import
 
 public class Product {
 
@@ -23,6 +24,7 @@ public class Product {
     private String shippingInformation;
     private String availabilityStatus;
     private String returnPolicy;
+    private int minimumOrderQuantity; // Sử dụng trường này làm "Số lượng đã bán"
     private List<String> tags;
     private Dimensions dimensions;
     private List<Review> reviews;
@@ -78,6 +80,9 @@ public class Product {
     public String getReturnPolicy() { return returnPolicy; }
     public void setReturnPolicy(String returnPolicy) { this.returnPolicy = returnPolicy; }
 
+    public int getMinimumOrderQuantity() { return minimumOrderQuantity; }
+    public void setMinimumOrderQuantity(int minimumOrderQuantity) { this.minimumOrderQuantity = minimumOrderQuantity; }
+
     public List<String> getTags() { return tags; }
     public void setTags(List<String> tags) { this.tags = tags; }
 
@@ -108,6 +113,8 @@ public class Product {
         private int rating;
         private String comment;
         private String reviewerName;
+        private String reviewerAvatar; // New field
+        private Date timestamp; // New field
 
         public Review() {}
 
@@ -119,5 +126,11 @@ public class Product {
 
         public String getReviewerName() { return reviewerName; }
         public void setReviewerName(String reviewerName) { this.reviewerName = reviewerName; }
+
+        public String getReviewerAvatar() { return reviewerAvatar; }
+        public void setReviewerAvatar(String reviewerAvatar) { this.reviewerAvatar = reviewerAvatar; }
+
+        public Date getTimestamp() { return timestamp; }
+        public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
     }
 }

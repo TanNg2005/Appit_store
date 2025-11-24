@@ -120,6 +120,9 @@ public class AdminOrdersActivity extends BaseActivity implements AdminOrdersAdap
     }
 
     private void updateOrderStatus(Order order, String newStatus) {
+        // Kiểm tra xem có phải đơn hàng mới hoàn thành không
+        boolean isCompleting = newStatus.equals("Đã hoàn thành") && !order.getStatus().equals("Đã hoàn thành");
+
         db.collection("orders").document(order.getDocumentId())
                 .update("status", newStatus)
                 .addOnSuccessListener(aVoid -> {
@@ -127,7 +130,28 @@ public class AdminOrdersActivity extends BaseActivity implements AdminOrdersAdap
                     if (newStatus.equals("Đã thanh toán") && !order.getStatus().equals("Đã thanh toán")) {
                         updateStock(order);
                     }
+                    
+                    // Nếu đơn hàng vừa hoàn thành, gửi thông báo cho người dùng để đánh giá
+                    if (isCompleting) {
+                        sendReviewNotification(order);
+                    }
                 });
+    }
+    
+    private void sendReviewNotification(Order order) {
+        // Tạo thông báo nhắc nhở người dùng đánh giá sản phẩm
+        Notification notification = new Notification(
+            "Đơn hàng đã hoàn thành",
+            "Đơn hàng của bạn đã được giao. Hãy đánh giá sản phẩm để nhận ưu đãi!",
+            "ORDER_COMPLETED"
+        );
+        notification.setUserId(order.getUserId());
+        notification.setRead(false);
+        notification.setTimestamp(new java.util.Date());
+        notification.setOrderId(order.getDocumentId()); // Liên kết thông báo với đơn hàng
+
+        db.collection("notifications").add(notification)
+            .addOnFailureListener(e -> Log.e(TAG, "Lỗi gửi thông báo đánh giá", e));
     }
 
     private void updateStock(Order order) {
@@ -136,8 +160,17 @@ public class AdminOrdersActivity extends BaseActivity implements AdminOrdersAdap
         for (Order.OrderItem item : order.getItems()) {
             productIds.add(item.getProductId());
         }
+        
+        // Convert String IDs to Long for query
+        List<Long> numericIds = new ArrayList<>();
+        for (String id : productIds) {
+            try {
+                 numericIds.add(Long.parseLong(id));
+            } catch (NumberFormatException e) {}
+        }
+        if (numericIds.isEmpty()) return;
 
-        db.collection("products").whereIn("id", productIds).get().addOnCompleteListener(task -> {
+        db.collection("products").whereIn("id", numericIds).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 QuerySnapshot productSnapshots = task.getResult();
                 for (QueryDocumentSnapshot productDoc : productSnapshots) {

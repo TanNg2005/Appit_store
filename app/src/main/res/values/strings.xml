@@ -5,8 +5,10 @@
 
     <!-- Navigation Drawer -->
     <string name="nav_home">Trang chủ</string>
+    <string name="nav_category">Danh mục</string> <!-- Mới -->
     <string name="nav_cart">Giỏ hàng</string>
     <string name="nav_account">Tài khoản</string>
+    <string name="nav_favorite">Yêu thích</string>
     <string name="nav_filter">Lọc sản phẩm</string>
     <string name="admin_panel">Admin Panel</string>
     <string name="nav_manage_orders">Quản lý đơn hàng</string>

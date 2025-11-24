@@ -38,14 +38,15 @@
                     app:civ_border_color="#FF000000" 
                     app:civ_border_width="2dp" />
 
-                <ImageButton
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btn_edit_profile_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
-                    android:background="@drawable/circle_background"
-                    android:padding="8dp"
-                    android:src="@android:drawable/ic_menu_edit" />
+                    android:src="@android:drawable/ic_menu_edit"
+                    app:fabSize="mini"
+                    app:elevation="4dp"
+                    app:borderWidth="0dp"/>
             </FrameLayout>
 
             <!-- Full Name -->
@@ -59,17 +60,25 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/edit_text_name"
+                
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:enabled="false" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <ImageButton
                     android:id="@+id/btn_edit_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
                     android:src="@android:drawable/ic_menu_edit" />
             </LinearLayout>
 
@@ -79,11 +88,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/profile_email" />
-            <EditText
-                android:id="@+id/edit_text_email"
+                
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false" />
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Phone -->
             <TextView
@@ -96,17 +111,25 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/edit_text_phone"
+                
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:enabled="false" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <ImageButton
                     android:id="@+id/btn_edit_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
                     android:src="@android:drawable/ic_menu_edit" />
             </LinearLayout>
 
@@ -121,28 +144,37 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/edit_text_address"
+                
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:enabled="false" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false" />
+                </com.google.android.material.textfield.TextInputLayout>
+                
                 <ImageButton
                     android:id="@+id/btn_edit_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
                     android:src="@android:drawable/ic_menu_edit" />
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_profile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginTop="32dp"
-                android:text="@string/profile_save_changes" />
+                android:text="@string/profile_save_changes"
+                app:cornerRadius="8dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_logout"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"

@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -35,6 +36,8 @@ import java.util.stream.Collectors;
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
+    private static final int REQUEST_CATEGORY = 1001; // Mã request code
+
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -78,8 +81,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    setEnabled(false);
-                    getOnBackPressedDispatcher().onBackPressed();
+                    // Nếu đang lọc theo danh mục, back sẽ clear bộ lọc
+                    if (productList.size() != fullProductList.size()) {
+                        filterByText("");
+                        Toast.makeText(MainActivity.this, "Đã xóa bộ lọc", Toast.LENGTH_SHORT).show();
+                    } else {
+                        setEnabled(false);
+                        getOnBackPressedDispatcher().onBackPressed();
+                    }
                 }
             }
         });
@@ -151,7 +160,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void filterByText(String query) {
         productList.clear();
-        if (query.isEmpty()) {
+        if (query == null || query.isEmpty()) {
             productList.addAll(fullProductList);
         } else {
             String lowerCaseQuery = query.toLowerCase();
@@ -162,6 +171,32 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             productList.addAll(filteredList);
         }
         adapter.notifyDataSetChanged();
+    }
+
+    // Hàm lọc theo danh mục
+    private void filterByCategory(String category) {
+        productList.clear();
+        if (category == null || category.isEmpty()) {
+            productList.addAll(fullProductList);
+        } else {
+            List<Product> filteredList = fullProductList.stream()
+                .filter(p -> p.getCategory() != null && p.getCategory().equalsIgnoreCase(category))
+                .collect(Collectors.toList());
+            productList.addAll(filteredList);
+        }
+        adapter.notifyDataSetChanged();
+        Toast.makeText(this, "Đang hiển thị: " + category, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CATEGORY && resultCode == RESULT_OK && data != null) {
+            String selectedCategory = data.getStringExtra("SELECTED_CATEGORY");
+            if (selectedCategory != null) {
+                filterByCategory(selectedCategory);
+            }
+        }
     }
 
     @Override
@@ -258,17 +293,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            // Do nothing
+            // Reset filter
+            filterByText("");
+        } else if (id == R.id.nav_category) {
+            // Mở CategoryActivity và chờ kết quả trả về
+            startActivityForResult(new Intent(this, CategoryActivity.class), REQUEST_CATEGORY);
         } else if (id == R.id.nav_cart) {
             startActivity(new Intent(this, CartActivity.class));
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
+        } else if (id == R.id.nav_favorite) {
+            startActivity(new Intent(this, WishlistActivity.class));
         } else if (id == R.id.nav_filter_advanced) {
             startActivity(new Intent(this, FilterActivity.class));
         } else if (id == R.id.nav_admin_orders) {
             startActivity(new Intent(this, AdminOrdersActivity.class));
         } else if (id == R.id.nav_admin_products) {
-            // SỬA LỖI: Mở màn hình quản lý sản phẩm
             startActivity(new Intent(this, AdminProductsActivity.class));
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));

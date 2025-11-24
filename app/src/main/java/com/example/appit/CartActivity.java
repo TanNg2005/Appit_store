@@ -104,7 +104,7 @@ public class CartActivity extends AppCompatActivity {
 
                     FirebaseFirestore.getInstance().collection("orders").document(orderId).set(order)
                         .addOnSuccessListener(aVoid -> {
-                            // SỬA LỖI: Gọi đúng phương thức để xóa các sản phẩm đã mua
+                            // Gọi phương thức xóa sản phẩm đã mua
                             cartManager.clearPurchasedItems(selectedItems);
                             Intent intent = new Intent(this, QrPaymentActivity.class);
                             intent.putExtra("TOTAL_AMOUNT", totalAmount);
@@ -117,8 +117,8 @@ public class CartActivity extends AppCompatActivity {
 
     public void updateTotalPrice() {
         double totalPrice = cartManager.calculateTotalPrice();
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        totalPriceTextView.setText(format.format(totalPrice));
+        NumberFormat format = NumberFormat.getInstance(new Locale("vi", "VN"));
+        totalPriceTextView.setText(format.format(totalPrice) + " VND");
     }
 
     @Override

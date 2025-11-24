@@ -50,6 +50,45 @@
                 android:textSize="24sp"
                 tools:text="Tên sản phẩm" />
 
+            <!-- Đánh giá sao -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+                
+                <RatingBar
+                    android:id="@+id/ratingBarIndicator"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="0.1"
+                    android:progressTint="#FFC107"
+                    android:isIndicator="true"
+                    tools:rating="4.5"/>
+                    
+                <TextView
+                    android:id="@+id/ratingTextIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    tools:text="(4.5)"/>
+            </LinearLayout>
+
+            <!-- Số lượng đã bán -->
+            <TextView
+                android:id="@+id/productSoldQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                tools:text="Đã bán: 100" />
+
             <TextView
                 android:id="@+id/productPrice"
                 android:layout_width="wrap_content"
@@ -60,13 +99,32 @@
                 android:textStyle="bold"
                 tools:text="Giá tiền" />
 
-            <Button
-                android:id="@+id/btnAddToCart"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="16dp"
-                android:text="Thêm vào giỏ hàng"
-                app:backgroundTint="@color/accent" />
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/btnAddToCart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thêm vào giỏ hàng"
+                    app:backgroundTint="@color/accent" />
+
+                <ImageButton
+                    android:id="@+id/btnAddToWishlist"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_favorite_border"
+                    app:tint="@color/accent"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Thêm vào yêu thích" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/productDescription"
@@ -79,13 +137,49 @@
             <TextView android:id="@+id/productBrand" style="@style/DetailItem" tools:text="Thương hiệu: Apple" />
             <TextView android:id="@+id/productCategory" style="@style/DetailItem" tools:text="Danh mục: Phụ kiện" />
             <TextView android:id="@+id/productStock" style="@style/DetailItem" tools:text="Trong kho: 50" />
-            <TextView android:id="@+id/productRating" style="@style/DetailItem" tools:text="Đánh giá: 4.5 / 5" />
             <TextView android:id="@+id/productDimensions" style="@style/DetailItem" tools:text="Kích thước: 10 x 20 x 5 cm" />
 
             <TextView style="@style/DetailHeader" android:text="Chính sách" />
             <TextView android:id="@+id/productWarranty" style="@style/DetailItem" tools:text="Bảo hành: 12 tháng" />
             <TextView android:id="@+id/productShipping" style="@style/DetailItem" tools:text="Giao hàng: 2-3 ngày" />
             <TextView android:id="@+id/productReturn" style="@style/DetailItem" tools:text="Đổi trả: 7 ngày" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Đánh giá của khách hàng"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_review"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Viết đánh giá"
+                    android:visibility="gone"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reviews_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
 
         </LinearLayout>
 

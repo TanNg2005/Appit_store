@@ -5,8 +5,10 @@
 
     <!-- Navigation Drawer -->
     <string name="nav_home">Home</string>
+    <string name="nav_category">Categories</string> <!-- Mới -->
     <string name="nav_cart">Cart</string>
     <string name="nav_account">Account</string>
+    <string name="nav_favorite">Wishlist</string>
     <string name="nav_filter">Filter Products</string>
     <string name="admin_panel">Admin Panel</string>
     <string name="nav_manage_orders">Manage Orders</string>
