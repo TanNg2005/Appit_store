@@ -19,7 +19,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Cấu hình chữ ký dùng chung cho tất cả mọi người
+    signingConfigs {
+        create("debug") {
+            storeFile = file("debug.keystore") // File này sẽ nằm trong thư mục app/
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(

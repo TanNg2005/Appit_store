@@ -80,8 +80,9 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
                                 if (!task.isSuccessful()) {
-                                    // Lỗi
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_LONG).show();
+                                    // Lỗi - Hiển thị thông báo chi tiết
+                                    String errorMessage = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                                    Toast.makeText(LoginActivity.this, "Authentication failed: " + errorMessage, Toast.LENGTH_LONG).show();
                                 } else {
                                     // Thành công
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
