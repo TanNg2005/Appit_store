@@ -48,7 +48,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             holder.timestamp.setText("");
         }
 
-        // SỬA LỖI: Gọi đúng phương thức isRead()
+        // Update UI based on read status
         if (notification.isRead()) {
             holder.title.setTypeface(null, Typeface.NORMAL);
             holder.message.setTypeface(null, Typeface.NORMAL);
@@ -60,13 +60,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if (!notification.isRead()) {
-                db.collection("notifications").document(notification.getDocumentId())
-                        .update("isRead", true);
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                 Notification currentNotification = notificationList.get(adapterPosition);
+                 if (!currentNotification.isRead()) {
+                     // Update Firestore
+                     db.collection("notifications").document(currentNotification.getDocumentId())
+                             .update("isRead", true);
 
-                // SỬA LỖI: Gọi đúng phương thức setRead()
-                notification.setRead(true);
-                notifyItemChanged(holder.getAdapterPosition());
+                     // Update local model and UI
+                     currentNotification.setRead(true);
+                     notifyItemChanged(adapterPosition);
+                 }
             }
         });
     }

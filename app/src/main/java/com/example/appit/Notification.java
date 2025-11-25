@@ -1,6 +1,7 @@
 package com.example.appit;
 
 import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.PropertyName;
 import java.util.Date;
 
 public class Notification {
@@ -40,7 +41,10 @@ public class Notification {
     public Date getTimestamp() { return timestamp; }
     public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
 
+    @PropertyName("isRead")
     public boolean isRead() { return isRead; }
+    
+    @PropertyName("isRead")
     public void setRead(boolean read) { isRead = read; }
 
     public String getUserId() { return userId; }

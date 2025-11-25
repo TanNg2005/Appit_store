@@ -42,22 +42,20 @@ public class NotificationActivity extends BaseActivity {
     }
 
     private void loadNotifications() {
+        if (mAuth.getCurrentUser() == null) return;
         String userId = mAuth.getCurrentUser().getUid();
+        
+        // Sử dụng addSnapshotListener với tham số activity (this) để tự động quản lý lifecycle
         db.collection("notifications")
                 .whereEqualTo("userId", userId)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .addSnapshotListener((snapshots, e) -> {
+                .addSnapshotListener(this, (snapshots, e) -> {
                     if (e != null) return;
                     notificationList.clear();
                     for (QueryDocumentSnapshot doc : snapshots) {
                         Notification notification = doc.toObject(Notification.class);
                         notification.setDocumentId(doc.getId());
                         notificationList.add(notification);
-
-                        // Mark as read
-                        if (!notification.isRead()) {
-                            db.collection("notifications").document(doc.getId()).update("isRead", true);
-                        }
                     }
                     adapter.notifyDataSetChanged();
                 });
