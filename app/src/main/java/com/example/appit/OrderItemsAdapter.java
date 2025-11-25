@@ -1,6 +1,7 @@
 package com.example.appit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,29 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Vi
         holder.quantity.setText("x" + item.getQuantity());
 
         Glide.with(context).load(item.getThumbnailUrl()).into(holder.image);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            Product product = new Product();
+            try {
+                // Try parsing as Long ID first
+                product.setId(Long.parseLong(item.getProductId()));
+            } catch (Exception e) {
+                // If not a number, treat as document ID
+                product.setDocumentId(item.getProductId());
+            }
+            product.setTitle(item.getProductName());
+            product.setThumbnail(item.getThumbnailUrl());
+            product.setPrice(item.getProductPrice());
+            
+            intent.putExtra("product", product);
+            // Nếu ID là dạng chuỗi (document ID), truyền thêm vào extra PRODUCT_ID để đảm bảo
+            if (item.getProductId() != null && !item.getProductId().matches("\\d+")) {
+                 intent.putExtra("PRODUCT_ID", item.getProductId());
+            }
+            
+            context.startActivity(intent);
+        });
     }
 
     @Override

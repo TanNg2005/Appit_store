@@ -13,6 +13,21 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/surface" />
 
+    <!-- Nút xem đơn đã đặt -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_view_orders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Đơn hàng đã đặt"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:textColor="@color/text_primary"
+        app:strokeColor="@color/text_primary"
+        app:icon="@drawable/ic_cart" 
+        app:iconTint="@color/text_primary"
+        app:iconGravity="textStart" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cart_recycler_view"
         android:layout_width="match_parent"

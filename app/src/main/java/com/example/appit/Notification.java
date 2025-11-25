@@ -9,11 +9,16 @@ public class Notification {
     private String documentId;
     private String title;
     private String message;
-    private String type; // "PROMO", "ORDER", "SYSTEM", "ORDER_COMPLETED"
+    private String type; // "PROMO", "ORDER", "SYSTEM", "ORDER_COMPLETED", "ADMIN_ALERT"
     private Date timestamp;
     private boolean isRead;
     private String userId;
     private String orderId; // Optional: Link to specific order for review
+    
+    // Thêm các trường để chứa thông tin chi tiết đơn hàng cho thông báo Admin
+    private String orderCustomerName;
+    private double orderTotalPrice;
+    private String orderDateStr;
 
     public Notification() {}
 
@@ -52,4 +57,13 @@ public class Notification {
 
     public String getOrderId() { return orderId; }
     public void setOrderId(String orderId) { this.orderId = orderId; }
+
+    public String getOrderCustomerName() { return orderCustomerName; }
+    public void setOrderCustomerName(String orderCustomerName) { this.orderCustomerName = orderCustomerName; }
+
+    public double getOrderTotalPrice() { return orderTotalPrice; }
+    public void setOrderTotalPrice(double orderTotalPrice) { this.orderTotalPrice = orderTotalPrice; }
+
+    public String getOrderDateStr() { return orderDateStr; }
+    public void setOrderDateStr(String orderDateStr) { this.orderDateStr = orderDateStr; }
 }

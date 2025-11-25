@@ -1,10 +1,11 @@
 package com.example.appit;
 
 import com.google.firebase.firestore.Exclude;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Date; // Added Date import
 
-public class Product {
+public class Product implements Serializable {
 
     @Exclude
     private String documentId; // Firestore Document ID
@@ -92,7 +93,7 @@ public class Product {
     public List<Review> getReviews() { return reviews; }
     public void setReviews(List<Review> reviews) { this.reviews = reviews; }
 
-    public static class Dimensions {
+    public static class Dimensions implements Serializable {
         private double width;
         private double height;
         private double depth;
@@ -109,7 +110,7 @@ public class Product {
         public void setDepth(double depth) { this.depth = depth; }
     }
 
-    public static class Review {
+    public static class Review implements Serializable {
         private int rating;
         private String comment;
         private String reviewerName;

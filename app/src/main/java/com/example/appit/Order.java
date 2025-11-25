@@ -16,6 +16,8 @@ public class Order {
     private double totalPrice;
     private String status;
     private User.ShippingAddress shippingAddress;
+    private String cancelReason; // Thêm trường lý do hủy
+    
     @ServerTimestamp
     private Date orderDate;
 
@@ -45,6 +47,9 @@ public class Order {
 
     public Date getOrderDate() { return orderDate; }
     public void setOrderDate(Date orderDate) { this.orderDate = orderDate; }
+
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
 
     // Nested class for items within an order
     public static class OrderItem {

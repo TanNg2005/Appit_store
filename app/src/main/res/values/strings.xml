@@ -5,9 +5,10 @@
 
     <!-- Navigation Drawer -->
     <string name="nav_home">Trang chủ</string>
-    <string name="nav_category">Danh mục</string> <!-- Mới -->
+    <string name="nav_category">Danh mục</string>
     <string name="nav_cart">Giỏ hàng</string>
     <string name="nav_account">Tài khoản</string>
+    <string name="nav_address_book">Sổ địa chỉ</string> <!-- Mới -->
     <string name="nav_favorite">Yêu thích</string>
     <string name="nav_filter">Lọc sản phẩm</string>
     <string name="admin_panel">Admin Panel</string>
@@ -48,5 +49,29 @@
 
     <!-- Main Screen -->
     <string name="featured_products">Sản phẩm nổi bật</string>
+    
+    <!-- Address Book -->
+    <string name="address_book_title">Sổ địa chỉ</string>
+    <string name="address_book_select_title">Chọn địa chỉ</string>
+    <string name="address_book_empty">Chưa có địa chỉ nào. Hãy thêm địa chỉ mới!</string>
+    <string name="address_add_new">Thêm địa chỉ mới</string>
+    <string name="address_edit">Sửa địa chỉ</string>
+    <string name="address_recipient_info">Thông tin người nhận</string>
+    <string name="address_hint_name">Họ và tên</string>
+    <string name="address_hint_phone">Số điện thoại</string>
+    <string name="address_location_info">Địa chỉ nhận hàng</string>
+    <string name="address_hint_street">Số nhà, tên đường</string>
+    <string name="address_hint_district">Phường/Xã, Quận/Huyện</string>
+    <string name="address_hint_city">Tỉnh/Thành phố</string>
+    <string name="address_set_default">Đặt làm địa chỉ mặc định</string>
+    <string name="address_save">Lưu</string>
+    <string name="address_cancel">Hủy</string>
+    <string name="address_delete_title">Xóa địa chỉ</string>
+    <string name="address_delete_message">Bạn có chắc muốn xóa địa chỉ này?</string>
+    <string name="address_delete_confirm">Xóa</string>
+    <string name="address_default_badge">Mặc định</string>
+    <string name="address_btn_set_default">Đặt làm mặc định</string>
+    <string name="address_btn_edit">Sửa</string>
+    <string name="address_btn_delete">Xóa</string>
 
 </resources>

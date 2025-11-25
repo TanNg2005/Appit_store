@@ -181,6 +181,25 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"/>
 
+            <!-- Sản phẩm liên quan -->
+            <TextView
+                android:id="@+id/text_related_products"
+                style="@style/DetailHeader"
+                android:layout_marginTop="24dp"
+                android:text="Sản phẩm liên quan"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/related_products_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

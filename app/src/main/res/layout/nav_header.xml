@@ -11,13 +11,14 @@
     <ImageView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@mipmap/ic_launcher" /> <!-- Lấy logo mặc định của app -->
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
+        android:id="@+id/nav_header_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Appit Store"
+        android:text="APPIT STORE"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textStyle="bold"/>
 
@@ -25,5 +26,5 @@
         android:id="@+id/nav_header_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="user@example.com" />
+        android:text="Loading..." />
 </LinearLayout>

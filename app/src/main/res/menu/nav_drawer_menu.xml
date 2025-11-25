@@ -6,7 +6,6 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
             android:title="@string/nav_home" />
-        <!-- Thêm mục Danh mục -->
         <item
             android:id="@+id/nav_category"
             android:icon="@android:drawable/ic_menu_sort_by_size"
@@ -19,6 +18,11 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_profile"
             android:title="@string/nav_account" />
+        <!-- Cập nhật title dùng string resource -->
+        <item
+            android:id="@+id/nav_address_book"
+            android:icon="@android:drawable/ic_menu_myplaces"
+            android:title="@string/address_book_title" />
         <item
             android:id="@+id/nav_favorite"
             android:icon="@drawable/ic_favorite_border"

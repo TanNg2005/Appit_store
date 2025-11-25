@@ -30,6 +30,7 @@
         <activity android:name=".ProductDetailActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".CartActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".ProfileActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".AddressBookActivity" android:exported="false" android:parentActivityName=".ProfileActivity" />
         <activity android:name=".OrderActivity" android:exported="false" android:parentActivityName=".CartActivity" />
         <activity android:name=".FilterActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".NotificationActivity" android:exported="false" android:parentActivityName=".MainActivity" />
@@ -38,7 +39,7 @@
         <activity android:name=".AdminEditProductActivity" android:exported="false" android:parentActivityName=".AdminProductsActivity" />
         <activity android:name=".SettingsActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".WishlistActivity" android:exported="false" android:parentActivityName=".MainActivity" />
-        <activity android:name=".CategoryActivity" android:exported="false" android:parentActivityName=".MainActivity" /> <!-- Mới -->
+        <activity android:name=".CategoryActivity" android:exported="false" android:parentActivityName=".MainActivity" />
 
         <!-- Payment Flow Activities -->
         <activity

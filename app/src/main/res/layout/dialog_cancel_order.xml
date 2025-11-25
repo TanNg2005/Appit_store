@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chọn lý do hủy đơn hàng"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:layout_marginBottom="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/cancel_reason_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/reason_change_mind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đổi ý, không muốn mua nữa"
+            android:padding="8dp"/>
+
+        <RadioButton
+            android:id="@+id/reason_wrong_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đặt nhầm thông tin (địa chỉ, sđt...)"
+            android:padding="8dp"/>
+
+        <RadioButton
+            android:id="@+id/reason_find_cheaper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tìm thấy giá rẻ hơn ở nơi khác"
+            android:padding="8dp"/>
+            
+        <RadioButton
+            android:id="@+id/reason_long_shipping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thời gian giao hàng quá lâu"
+            android:padding="8dp"/>
+
+        <RadioButton
+            android:id="@+id/reason_other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lý do khác"
+            android:padding="8dp"/>
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_other_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:hint="Nhập lý do khác">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_other_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:gravity="top"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

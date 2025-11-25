@@ -3,84 +3,78 @@ package com.example.appit;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class OrderActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private OrderItemsAdapter adapter;
-    private TextView totalPriceTextView, orderStatusTextView, orderDateTextView, shippingAddressTextView;
-    private String orderId;
+    private OrderHistoryAdapter adapter;
+    private List<Order> orderList = new ArrayList<>();
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        db = FirebaseFirestore.getInstance();
+
         Toolbar toolbar = findViewById(R.id.order_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Chi tiết Đơn hàng");
+        getSupportActionBar().setTitle("Đơn hàng đã đặt");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.order_recycler_view);
-        totalPriceTextView = findViewById(R.id.order_total_price);
-        orderStatusTextView = findViewById(R.id.order_status);
-        orderDateTextView = findViewById(R.id.order_date);
-        shippingAddressTextView = findViewById(R.id.order_shipping_address);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        
+        adapter = new OrderHistoryAdapter(this, orderList);
+        recyclerView.setAdapter(adapter);
 
-        orderId = getIntent().getStringExtra("ORDER_ID");
-
-        if (orderId != null && !orderId.isEmpty()) {
-            loadOrderDetails();
-        } else {
-            Toast.makeText(this, "Không tìm thấy thông tin đơn hàng", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+        loadOrders();
     }
 
-    private void loadOrderDetails() {
-        FirebaseFirestore.getInstance().collection("orders").document(orderId).get()
-            .addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists()) {
-                    Order order = documentSnapshot.toObject(Order.class);
-                    if (order != null) {
-                        displayOrderDetails(order);
+    private void loadOrders() {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        
+        db.collection("orders")
+            .whereEqualTo("userId", userId)
+            .orderBy("orderDate", Query.Direction.DESCENDING)
+            .addSnapshotListener((snapshots, e) -> {
+                if (e != null) {
+                    Log.w("OrderActivity", "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshots != null) {
+                    orderList.clear();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        Order order = doc.toObject(Order.class);
+                        // QUAN TRỌNG: Gán Document ID từ Firestore vào object Order
+                        // Nếu thiếu dòng này, khi bấm Hủy đơn hàng sẽ bị crash do ID null
+                        order.setDocumentId(doc.getId());
+                        
+                        orderList.add(order);
                     }
+                    adapter.notifyDataSetChanged();
                 }
             });
-    }
-
-    private void displayOrderDetails(Order order) {
-        // Display general order info
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        totalPriceTextView.setText(format.format(order.getTotalPrice()));
-        orderStatusTextView.setText("Trạng thái: " + order.getStatus());
-
-        if (order.getOrderDate() != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            orderDateTextView.setText("Ngày đặt: " + sdf.format(order.getOrderDate()));
-        }
-        
-        if(order.getShippingAddress() != null){
-            User.ShippingAddress address = order.getShippingAddress();
-            shippingAddressTextView.setText(String.format("Giao đến: %s, %s, %s", address.getStreet(), address.getDistrict(), address.getCity()));
-        }
-
-        // Setup RecyclerView for order items
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new OrderItemsAdapter(this, order.getItems() != null ? order.getItems() : new ArrayList<>());
-        recyclerView.setAdapter(adapter);
     }
 
     @Override

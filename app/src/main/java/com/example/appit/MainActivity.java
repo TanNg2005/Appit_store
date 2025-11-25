@@ -98,6 +98,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         listenForUnreadNotifications();
+        // Update header again in case user changed profile info
+        updateNavHeader();
     }
 
     @Override
@@ -270,10 +272,58 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void updateNavHeader() {
         View headerView = navigationView.getHeaderView(0);
+        TextView navHeaderName = headerView.findViewById(R.id.nav_header_name);
         TextView navHeaderEmail = headerView.findViewById(R.id.nav_header_email);
+        
+        // Đặt mặc định "APPIT STORE" in đậm
+        navHeaderName.setText("APPIT STORE");
+        
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        
         if (currentUser != null) {
-            navHeaderEmail.setText(currentUser.getEmail());
+            // Ưu tiên 1: Dùng displayName có sẵn trong Auth (nhanh hơn vì không cần query DB)
+            String authDisplayName = currentUser.getDisplayName();
+            if (authDisplayName != null && !authDisplayName.isEmpty()) {
+                 navHeaderEmail.setText(authDisplayName);
+            } else {
+                 // Ưu tiên 2: Nếu Auth chưa có displayName, fetch từ Firestore
+                 db.collection("users").document(currentUser.getUid())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                       if (documentSnapshot.exists()) {
+                           // Nếu có trường displayName trong DB thì dùng luôn
+                           if (documentSnapshot.contains("displayName")) {
+                               String dbDisplayName = documentSnapshot.getString("displayName");
+                               if (dbDisplayName != null && !dbDisplayName.isEmpty()) {
+                                   navHeaderEmail.setText(dbDisplayName);
+                                   return;
+                               }
+                           }
+                           
+                           // Nếu chưa có displayName, ghép từ firstName + lastName
+                           String firstName = documentSnapshot.getString("firstName");
+                           String lastName = documentSnapshot.getString("lastName");
+                           String fullName = "";
+                           
+                           if (firstName != null) fullName += firstName;
+                           if (lastName != null) {
+                               if (!fullName.isEmpty()) fullName += " ";
+                               fullName += lastName;
+                           }
+                           
+                           if (!fullName.isEmpty()) {
+                               navHeaderEmail.setText(fullName);
+                           } else {
+                               navHeaderEmail.setText(currentUser.getEmail());
+                           }
+                       } else {
+                           navHeaderEmail.setText(currentUser.getEmail());
+                       }
+                    })
+                    .addOnFailureListener(e -> {
+                        navHeaderEmail.setText(currentUser.getEmail());
+                    });
+            }
         } else {
             navHeaderEmail.setText("Vui lòng đăng nhập");
         }
@@ -302,6 +352,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(new Intent(this, CartActivity.class));
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
+        } else if (id == R.id.nav_address_book) {
+            startActivity(new Intent(this, AddressBookActivity.class));
         } else if (id == R.id.nav_favorite) {
             startActivity(new Intent(this, WishlistActivity.class));
         } else if (id == R.id.nav_filter_advanced) {

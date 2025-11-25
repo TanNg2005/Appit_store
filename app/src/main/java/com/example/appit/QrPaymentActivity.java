@@ -19,6 +19,8 @@ public class QrPaymentActivity extends AppCompatActivity {
     private ImageView qrCodeImageView;
     private TextView countdownTimerTextView;
     private CountDownTimer visualCountDownTimer;
+    private Handler simulationHandler;
+    private Runnable simulationRunnable;
 
     private String orderId;
     private double totalAmount;
@@ -41,7 +43,10 @@ public class QrPaymentActivity extends AppCompatActivity {
         // Bắt đầu đồng hồ đếm ngược trực quan
         startVisualCountdown();
 
-        // SỬA: Biến mã QR thành nút bấm ẩn để giả lập quét thành công
+        // Giả lập thanh toán thành công sau 5 giây
+        startPaymentSimulation();
+
+        // Biến mã QR thành nút bấm ẩn (dự phòng nếu người dùng muốn bấm ngay)
         qrCodeImageView.setOnClickListener(v -> {
             proceedToSuccessScreen();
         });
@@ -54,13 +59,27 @@ public class QrPaymentActivity extends AppCompatActivity {
                 .into(qrCodeImageView);
     }
 
+    private void startPaymentSimulation() {
+        simulationHandler = new Handler(Looper.getMainLooper());
+        simulationRunnable = () -> {
+            if (!isFinishing() && !isDestroyed()) {
+                proceedToSuccessScreen();
+            }
+        };
+        // Tự động chuyển sau 5 giây
+        simulationHandler.postDelayed(simulationRunnable, 5000); 
+    }
+
     private void proceedToSuccessScreen() {
-        // Dừng các bộ đếm giờ để tránh rò rỉ bộ nhớ
+        // Dừng các bộ đếm giờ
         if (visualCountDownTimer != null) {
             visualCountDownTimer.cancel();
         }
+        if (simulationHandler != null && simulationRunnable != null) {
+            simulationHandler.removeCallbacks(simulationRunnable);
+        }
 
-        // Kiểm tra activity còn hoạt động không trước khi chuyển
+        // Kiểm tra activity còn hoạt động không
         if (!isFinishing() && !isDestroyed()) {
             Intent intent = new Intent(QrPaymentActivity.this, PaymentSuccessActivity.class);
             intent.putExtra("ORDER_ID", orderId);
@@ -81,7 +100,7 @@ public class QrPaymentActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 countdownTimerTextView.setText("Mã đã hết hạn");
-                qrCodeImageView.setOnClickListener(null); // Vô hiệu hóa nút ẩn khi hết hạn
+                qrCodeImageView.setOnClickListener(null); 
             }
         }.start();
     }
@@ -91,6 +110,9 @@ public class QrPaymentActivity extends AppCompatActivity {
         super.onDestroy();
         if (visualCountDownTimer != null) {
             visualCountDownTimer.cancel();
+        }
+        if (simulationHandler != null && simulationRunnable != null) {
+            simulationHandler.removeCallbacks(simulationRunnable);
         }
     }
 }

@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -81,18 +82,30 @@ public class RegisterActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (!task.isSuccessful()) {
                                     progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(RegisterActivity.this, "Đăng ký thất bại: " + task.getException().getMessage(),
+                                    Toast.makeText(RegisterActivity.this, "Đăng ký thất bại: " + 
+                                            (task.getException() != null ? task.getException().getMessage() : "Lỗi không xác định"),
                                             Toast.LENGTH_LONG).show();
                                 } else {
-                                    // 2. Nếu thành công, lấy UID và tạo document trong Firestore
+                                    // 2. Nếu thành công, lấy UID
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                     if (firebaseUser != null) {
                                         String userId = firebaseUser.getUid();
+                                        
+                                        // Tạo display name: Họ + Tên (Ví dụ: Le Xuan Tai)
+                                        String displayName = lastName + " " + firstName;
+
+                                        // Cập nhật profile cho Auth user (để getCurrentUser().getDisplayName() hoạt động ngay)
+                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                .setDisplayName(displayName)
+                                                .build();
+                                        firebaseUser.updateProfile(profileUpdates);
+
+                                        // Lưu vào Firestore
                                         Map<String, Object> user = new HashMap<>();
                                         user.put("firstName", firstName);
                                         user.put("lastName", lastName);
+                                        user.put("displayName", displayName); // Lưu thêm trường displayName
                                         user.put("email", email);
-                                        // Thêm các trường mặc định khác nếu cần
                                         user.put("avatarUrl", "");
 
                                         db.collection("users").document(userId).set(user)

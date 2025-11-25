@@ -25,8 +25,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
@@ -34,7 +37,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private Product currentProduct;
     private ReviewAdapter reviewAdapter;
+    private RelatedProductsAdapter relatedProductsAdapter;
     private final List<Product.Review> reviewList = new ArrayList<>();
+    private final List<Product> relatedProductList = new ArrayList<>();
     private Button btnAddReview;
     private boolean isFavorite = false; // Trạng thái yêu thích
 
@@ -60,6 +65,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         reviewAdapter = new ReviewAdapter(this, reviewList);
         reviewsRecyclerView.setAdapter(reviewAdapter);
 
+        // Thiết lập RecyclerView cho sản phẩm liên quan
+        RecyclerView relatedRecyclerView = findViewById(R.id.related_products_recycler_view);
+        relatedRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        relatedProductsAdapter = new RelatedProductsAdapter(this, relatedProductList);
+        relatedRecyclerView.setAdapter(relatedProductsAdapter);
+
         btnAddToCart.setOnClickListener(v -> {
             if (currentProduct != null) {
                 CartManager.getInstance().addProduct(currentProduct);
@@ -77,24 +88,81 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         btnAddReview.setOnClickListener(v -> showAddReviewDialog());
 
+        // Check for object first, then check for ID
+        if (getIntent().hasExtra("product")) {
+             try {
+                 currentProduct = (Product) getIntent().getSerializableExtra("product");
+                 if (currentProduct != null) {
+                     populateUI(currentProduct);
+                     
+                     // If we only have basic info (like ID or partial info), we should try to load full details
+                     // First check if we have a document ID (String) or product ID (Long)
+                     if (currentProduct.getDocumentId() != null && !currentProduct.getDocumentId().isEmpty()) {
+                         loadProductDetails(currentProduct.getDocumentId());
+                         checkCanReview(currentProduct.getDocumentId());
+                         checkIfFavorite(currentProduct.getDocumentId(), btnAddToWishlist);
+                     } else if (currentProduct.getId() != null) {
+                         // If we have numeric ID, we need to find the document ID
+                         findProductByNumericId(currentProduct.getId(), btnAddToWishlist);
+                     }
+                 }
+             } catch (Exception e) {
+                 Log.e(TAG, "Error retrieving product from intent", e);
+             }
+        }
+
         String documentId = getIntent().getStringExtra("PRODUCT_ID");
         if (documentId != null && !documentId.isEmpty()) {
             loadProductDetails(documentId);
             checkCanReview(documentId);
             checkIfFavorite(documentId, btnAddToWishlist);
-        } else {
+        } else if (currentProduct == null) {
+            // Only show error if we didn't successfully load product from object
             Toast.makeText(this, "Error: Không tìm thấy ID sản phẩm", Toast.LENGTH_SHORT).show();
-            finish();
+            // finish(); // Don't finish yet, let the UI show empty state or whatever was loaded
         }
+    }
+
+    private void findProductByNumericId(Long id, ImageButton btnAddToWishlist) {
+        ProgressBar progressBar = findViewById(R.id.productProgressBar);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+
+        db.collection("products").whereEqualTo("id", id).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                     if (progressBar != null) progressBar.setVisibility(View.GONE);
+                     if (!queryDocumentSnapshots.isEmpty()) {
+                         QueryDocumentSnapshot document = (QueryDocumentSnapshot) queryDocumentSnapshots.getDocuments().get(0);
+                         currentProduct = document.toObject(Product.class);
+                         currentProduct.setDocumentId(document.getId());
+                         populateUI(currentProduct);
+                         
+                         checkCanReview(document.getId());
+                         checkIfFavorite(document.getId(), btnAddToWishlist);
+                         
+                         // Load reviews
+                         if (currentProduct.getReviews() != null) {
+                             reviewList.clear();
+                             reviewList.addAll(currentProduct.getReviews());
+                             reviewAdapter.notifyDataSetChanged();
+                         }
+                         
+                         // Load related products
+                         loadRelatedProducts();
+                     }
+                })
+                .addOnFailureListener(e -> {
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    Log.e(TAG, "Error finding product by ID", e);
+                });
     }
 
     private void loadProductDetails(String documentId) {
         ProgressBar progressBar = findViewById(R.id.productProgressBar);
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
 
         db.collection("products").document(documentId).get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    progressBar.setVisibility(View.GONE);
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     if (documentSnapshot.exists()) {
                         try {
                             currentProduct = documentSnapshot.toObject(Product.class);
@@ -108,6 +176,9 @@ public class ProductDetailActivity extends AppCompatActivity {
                                     reviewList.addAll(currentProduct.getReviews());
                                     reviewAdapter.notifyDataSetChanged();
                                 }
+                                
+                                // Load related products
+                                loadRelatedProducts();
                             }
                         } catch (Exception e) {
                              Log.e(TAG, "Error parsing product object", e);
@@ -115,15 +186,68 @@ public class ProductDetailActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    progressBar.setVisibility(View.GONE);
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     Log.e(TAG, "Error loading product details", e);
                 });
+    }
+
+    private void loadRelatedProducts() {
+        if (currentProduct == null || currentProduct.getTags() == null || currentProduct.getTags().isEmpty()) {
+            return; // Nếu không có tags thì không tìm sản phẩm liên quan
+        }
+
+        List<String> tags = currentProduct.getTags();
+        
+        // Firestore giới hạn 'array-contains-any' tối đa 10 giá trị. 
+        // Nếu tags nhiều hơn 10, chỉ lấy 10 cái đầu tiên.
+        List<String> searchTags = tags.size() > 10 ? tags.subList(0, 10) : tags;
+
+        db.collection("products")
+                .whereArrayContainsAny("tags", searchTags)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Product> tempList = new ArrayList<>();
+                    String currentId = currentProduct.getDocumentId();
+
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        // Loại trừ sản phẩm hiện tại
+                        if (!doc.getId().equals(currentId)) {
+                            Product p = doc.toObject(Product.class);
+                            p.setDocumentId(doc.getId());
+                            tempList.add(p);
+                        }
+                    }
+
+                    // Random và lấy tối đa 4 sản phẩm
+                    Collections.shuffle(tempList);
+                    relatedProductList.clear();
+                    if (tempList.size() > 4) {
+                        relatedProductList.addAll(tempList.subList(0, 4));
+                    } else {
+                        relatedProductList.addAll(tempList);
+                    }
+
+                    relatedProductsAdapter.notifyDataSetChanged();
+
+                    // Hiển thị tiêu đề và RecyclerView nếu có sản phẩm
+                    TextView titleView = findViewById(R.id.text_related_products);
+                    RecyclerView recyclerView = findViewById(R.id.related_products_recycler_view);
+                    
+                    if (!relatedProductList.isEmpty()) {
+                        titleView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    } else {
+                        titleView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error loading related products", e));
     }
 
     private void checkCanReview(String productDocId) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            btnAddReview.setVisibility(View.GONE);
+            if (btnAddReview != null) btnAddReview.setVisibility(View.GONE);
             return;
         }
 
@@ -136,20 +260,26 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Order order = doc.toObject(Order.class);
-                        for (Order.OrderItem item : order.getItems()) {
-                            if (currentProduct != null && item.getProductId().equals(String.valueOf(currentProduct.getId()))) {
-                                hasBought = true;
-                                break;
+                        if (order.getItems() != null) {
+                            for (Order.OrderItem item : order.getItems()) {
+                                if (currentProduct != null && item.getProductId() != null && 
+                                    (item.getProductId().equals(String.valueOf(currentProduct.getId())) || 
+                                     item.getProductId().equals(currentProduct.getDocumentId()))) {
+                                    hasBought = true;
+                                    break;
+                                }
                             }
                         }
                         if (hasBought) break;
                     }
                 }
                 
-                if (hasBought) {
-                    btnAddReview.setVisibility(View.VISIBLE);
-                } else {
-                    btnAddReview.setVisibility(View.GONE);
+                if (btnAddReview != null) {
+                    if (hasBought) {
+                        btnAddReview.setVisibility(View.VISIBLE);
+                    } else {
+                        btnAddReview.setVisibility(View.GONE);
+                    }
                 }
             });
     }
@@ -157,7 +287,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     // Kiểm tra sản phẩm có trong danh sách yêu thích không
     private void checkIfFavorite(String productId, ImageButton btnWishlist) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) return;
+        if (currentUser == null || btnWishlist == null) return;
 
         db.collection("users").document(currentUser.getUid())
             .collection("wishlist").document(productId)
@@ -182,6 +312,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         String productId = currentProduct.getDocumentId();
+        if (productId == null && currentProduct.getId() != null) {
+            // If we don't have document ID but have numeric ID, maybe query for it first or just warn
+             Toast.makeText(this, "Đang tải thông tin sản phẩm...", Toast.LENGTH_SHORT).show();
+             return;
+        }
+        
+        if (productId == null) return;
+
         if (isFavorite) {
             // Xóa khỏi wishlist
             db.collection("users").document(currentUser.getUid())
@@ -226,7 +364,10 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void submitReview(float rating, String comment) {
-        if (currentProduct == null) return;
+        if (currentProduct == null || currentProduct.getDocumentId() == null) {
+             Toast.makeText(this, "Lỗi: Không thể xác định sản phẩm để đánh giá", Toast.LENGTH_SHORT).show();
+             return;
+        }
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -267,6 +408,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(Product product) {
+        if (product == null) return;
+        
         ImageView imageView = findViewById(R.id.productImage);
         TextView textName = findViewById(R.id.productName);
         TextView textPrice = findViewById(R.id.productPrice);
@@ -275,11 +418,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         TextView textCategory = findViewById(R.id.productCategory);
         TextView textStock = findViewById(R.id.productStock);
         
-        // SỬA: Ánh xạ các view RatingBar và TextView rating mới
         RatingBar ratingBarIndicator = findViewById(R.id.ratingBarIndicator);
         TextView ratingTextIndicator = findViewById(R.id.ratingTextIndicator);
         
-        // Hiển thị số lượng đã bán
         TextView textSoldQuantity = findViewById(R.id.productSoldQuantity);
         if (textSoldQuantity != null) {
             textSoldQuantity.setText("Đã bán: " + product.getMinimumOrderQuantity());
@@ -290,38 +431,41 @@ public class ProductDetailActivity extends AppCompatActivity {
         TextView textShipping = findViewById(R.id.productShipping);
         TextView textReturn = findViewById(R.id.productReturn);
 
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null && product.getTitle() != null) {
             getSupportActionBar().setTitle(product.getTitle());
         }
-        textName.setText(product.getTitle());
+        if (textName != null) textName.setText(product.getTitle());
         
-        // Set giá trị cho Rating Bar
-        ratingBarIndicator.setRating((float) product.getRating());
-        ratingTextIndicator.setText(String.format(java.util.Locale.US, "(%.1f)", product.getRating()));
+        if (ratingBarIndicator != null) ratingBarIndicator.setRating((float) product.getRating());
+        if (ratingTextIndicator != null) ratingTextIndicator.setText(String.format(java.util.Locale.US, "(%.1f)", product.getRating()));
         
-        String priceWithUnit = product.getPrice();
-        if (!priceWithUnit.toLowerCase().contains("vnd")) {
-             priceWithUnit += " VND";
+        if (textPrice != null && product.getPrice() != null) {
+            String priceWithUnit = product.getPrice();
+            if (!priceWithUnit.toLowerCase().contains("vnd")) {
+                 priceWithUnit += " VND";
+            }
+            textPrice.setText(priceWithUnit);
         }
-        textPrice.setText(priceWithUnit);
         
-        textDescription.setText(product.getDescription());
+        if (textDescription != null) textDescription.setText(product.getDescription());
 
-        if (product.getImages() != null && !product.getImages().isEmpty()) {
-            Glide.with(this).load(product.getImages().get(0)).into(imageView);
-        } else {
-            Glide.with(this).load(product.getThumbnail()).into(imageView);
+        if (imageView != null) {
+            if (product.getImages() != null && !product.getImages().isEmpty()) {
+                Glide.with(this).load(product.getImages().get(0)).into(imageView);
+            } else if (product.getThumbnail() != null) {
+                Glide.with(this).load(product.getThumbnail()).into(imageView);
+            }
         }
 
-        textBrand.setText("Thương hiệu: " + product.getBrand());
-        textCategory.setText("Danh mục: " + product.getCategory());
-        textStock.setText("Trong kho: " + product.getStock());
+        if (textBrand != null) textBrand.setText("Thương hiệu: " + product.getBrand());
+        if (textCategory != null) textCategory.setText("Danh mục: " + product.getCategory());
+        if (textStock != null) textStock.setText("Trong kho: " + product.getStock());
         
-        textWarranty.setText("Bảo hành: " + product.getWarrantyInformation());
-        textShipping.setText("Vận chuyển: " + product.getShippingInformation());
-        textReturn.setText("Chính sách đổi trả: " + product.getReturnPolicy());
+        if (textWarranty != null) textWarranty.setText("Bảo hành: " + product.getWarrantyInformation());
+        if (textShipping != null) textShipping.setText("Vận chuyển: " + product.getShippingInformation());
+        if (textReturn != null) textReturn.setText("Chính sách đổi trả: " + product.getReturnPolicy());
 
-        if (product.getDimensions() != null) {
+        if (textDimensions != null && product.getDimensions() != null) {
             Product.Dimensions dims = product.getDimensions();
             String dimText = String.format(java.util.Locale.US, "Kích thước: %.2f x %.2f x %.2f cm", dims.getWidth(), dims.getHeight(), dims.getDepth());
             textDimensions.setText(dimText);

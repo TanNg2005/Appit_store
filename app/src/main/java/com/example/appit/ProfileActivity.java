@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
@@ -86,8 +87,11 @@ public class ProfileActivity extends AppCompatActivity {
         editNameButton.setOnClickListener(v -> toggleEdit(nameEditText));
         editPhoneButton.setOnClickListener(v -> toggleEdit(phoneEditText));
         
-        // SỬA LỖI: Thay đổi sự kiện click cho nút sửa địa chỉ
-        editAddressButton.setOnClickListener(v -> showEditAddressDialog());
+        // Thay đổi sự kiện click cho nút sửa địa chỉ -> Mở Sổ địa chỉ
+        editAddressButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, AddressBookActivity.class);
+            startActivity(intent);
+        });
         
         editImageButton.setOnClickListener(v -> mGetContent.launch("image/*"));
     }
@@ -113,8 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     .filter(User.ShippingAddress::isDefault).findFirst()
                                     .orElse(user.getShippingAddresses().get(0));
                         } else {
-                            currentAddress = new User.ShippingAddress(); // Tạo mới nếu chưa có
-                            currentAddress.setDefault(true);
+                            currentAddress = null;
                         }
                         updateAddressDisplay();
 
@@ -138,79 +141,19 @@ public class ProfileActivity extends AppCompatActivity {
                 currentAddress.getDistrict(), 
                 currentAddress.getCity()));
         } else {
-            addressEditText.setText("");
+            addressEditText.setText("Chưa có địa chỉ mặc định");
         }
-    }
-
-    private void showEditAddressDialog() {
-        if (currentAddress == null) currentAddress = new User.ShippingAddress();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_edit_address, null);
-        builder.setView(dialogView);
-
-        TextInputEditText editStreet = dialogView.findViewById(R.id.edit_street);
-        TextInputEditText editDistrict = dialogView.findViewById(R.id.edit_district);
-        TextInputEditText editCity = dialogView.findViewById(R.id.edit_city);
-
-        // Điền dữ liệu cũ
-        editStreet.setText(currentAddress.getStreet());
-        editDistrict.setText(currentAddress.getDistrict());
-        editCity.setText(currentAddress.getCity());
-
-        builder.setPositiveButton("Lưu tạm thời", (dialog, which) -> {
-            currentAddress.setStreet(editStreet.getText().toString().trim());
-            currentAddress.setDistrict(editDistrict.getText().toString().trim());
-            currentAddress.setCity(editCity.getText().toString().trim());
-            updateAddressDisplay();
-        });
-
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
-        builder.create().show();
     }
 
     private void saveUserProfile() {
         String name = nameEditText.getText().toString().trim();
         String phone = phoneEditText.getText().toString().trim();
         
-        userRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                User user = documentSnapshot.toObject(User.class);
-                if (user != null) {
-                    user.setDisplayName(name);
-                    user.setPhone(phone);
-
-                    // Cập nhật địa chỉ vào danh sách
-                    List<User.ShippingAddress> addresses = user.getShippingAddresses();
-                    if (addresses == null) addresses = new ArrayList<>();
-                    
-                    if (currentAddress != null) {
-                        // Nếu danh sách trống, thêm mới. Nếu có rồi, thay thế cái mặc định
-                        if (addresses.isEmpty()) {
-                            currentAddress.setRecipientName(name); // Cập nhật tên người nhận
-                            currentAddress.setPhone(phone); // Cập nhật sđt người nhận
-                            addresses.add(currentAddress);
-                        } else {
-                            // Tìm và cập nhật địa chỉ mặc định
-                            for (int i = 0; i < addresses.size(); i++) {
-                                if (addresses.get(i).isDefault()) {
-                                    currentAddress.setRecipientName(name);
-                                    currentAddress.setPhone(phone);
-                                    addresses.set(i, currentAddress);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    user.setShippingAddresses(addresses);
-
-                    userRef.set(user)
-                        .addOnSuccessListener(aVoid -> Toast.makeText(ProfileActivity.this, "Hồ sơ đã được cập nhật", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                }
-            }
-        });
+        userRef.update(
+            "displayName", name,
+            "phone", phone
+        ).addOnSuccessListener(aVoid -> Toast.makeText(ProfileActivity.this, "Hồ sơ đã được cập nhật", Toast.LENGTH_SHORT).show())
+         .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void uploadProfileImage(Uri imageUri) {
