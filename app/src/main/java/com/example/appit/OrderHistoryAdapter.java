@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -89,6 +91,9 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             if (order.getItems().size() > 1) {
                 holder.moreItems.setVisibility(View.VISIBLE);
                 holder.moreItems.setText("và " + (order.getItems().size() - 1) + " sản phẩm khác");
+                
+                // Bấm vào "và ... sản phẩm khác" để xem danh sách đầy đủ
+                holder.moreItems.setOnClickListener(v -> showOrderItemsDialog(order.getItems()));
             } else {
                 holder.moreItems.setVisibility(View.GONE);
             }
@@ -97,13 +102,23 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
                 Intent intent = new Intent(context, ProductDetailActivity.class);
                 Product product = new Product();
                 try {
-                    long pId = Long.parseLong(firstItem.getProductId());
-                    product.setId(pId);
-                } catch (NumberFormatException e) {
+                    // Try parsing as Long ID first
+                    product.setId(Long.parseLong(firstItem.getProductId()));
+                } catch (Exception e) {
+                    // If not a number, treat as document ID
+                    product.setDocumentId(firstItem.getProductId());
                 }
                 product.setTitle(firstItem.getProductName());
                 product.setThumbnail(firstItem.getThumbnailUrl());
-                intent.putExtra("product", product); 
+                product.setPrice(firstItem.getProductPrice());
+                
+                intent.putExtra("product", product);
+                
+                // Nếu ID là dạng chuỗi (document ID), truyền thêm vào extra PRODUCT_ID để đảm bảo
+                if (firstItem.getProductId() != null && !firstItem.getProductId().matches("\\d+")) {
+                     intent.putExtra("PRODUCT_ID", firstItem.getProductId());
+                }
+                
                 context.startActivity(intent);
             };
             holder.productImage.setOnClickListener(productClickListener);
@@ -128,6 +143,25 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         } else {
             holder.btnCancel.setVisibility(View.GONE);
         }
+    }
+    
+    private void showOrderItemsDialog(List<Order.OrderItem> items) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_order_items, null);
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        
+        RecyclerView recyclerView = dialogView.findViewById(R.id.dialog_items_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        OrderItemsAdapter adapter = new OrderItemsAdapter(context, items);
+        recyclerView.setAdapter(adapter);
+        
+        Button btnClose = dialogView.findViewById(R.id.btn_close_dialog);
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+        
+        dialog.show();
     }
 
     private void updateStatusColor(TextView statusView, String status) {

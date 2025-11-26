@@ -253,7 +253,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         db.collection("orders")
             .whereEqualTo("userId", currentUser.getUid())
-            .whereEqualTo("status", "Đã hoàn thành")
+            .whereEqualTo("status", "Đã nhận hàng")
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
                 boolean hasBought = false;
@@ -347,20 +347,26 @@ public class ProductDetailActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_add_review, null);
         builder.setView(view);
+        AlertDialog dialog = builder.create();
 
         RatingBar ratingBar = view.findViewById(R.id.dialog_rating_bar);
         TextInputEditText commentInput = view.findViewById(R.id.dialog_review_comment);
+        Button btnCancel = view.findViewById(R.id.btn_cancel_review);
+        Button btnSubmit = view.findViewById(R.id.btn_submit_review);
 
-        builder.setPositiveButton("Gửi đánh giá", (dialog, which) -> {
+        btnSubmit.setOnClickListener(v -> {
             float rating = ratingBar.getRating();
             String comment = "";
             if (commentInput.getText() != null) {
                 comment = commentInput.getText().toString();
             }
             submitReview(rating, comment);
+            dialog.dismiss();
         });
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
+        
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        
+        dialog.show();
     }
 
     private void submitReview(float rating, String comment) {

@@ -171,6 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Viết đánh giá"
+                    android:textColor="@color/accent"
                     android:visibility="gone"
                     style="@style/Widget.MaterialComponents.Button.TextButton"/>
             </LinearLayout>
