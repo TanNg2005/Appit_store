@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -19,8 +21,7 @@ public class QrPaymentActivity extends AppCompatActivity {
     private ImageView qrCodeImageView;
     private TextView countdownTimerTextView;
     private CountDownTimer visualCountDownTimer;
-    private Handler simulationHandler;
-    private Runnable simulationRunnable;
+    // Đã xóa simulationHandler và runnable tự động chuyển trang
 
     private String orderId;
     private double totalAmount;
@@ -43,10 +44,10 @@ public class QrPaymentActivity extends AppCompatActivity {
         // Bắt đầu đồng hồ đếm ngược trực quan
         startVisualCountdown();
 
-        // Giả lập thanh toán thành công sau 5 giây
-        startPaymentSimulation();
+        // Hiển thị thông báo hướng dẫn
+        Toast.makeText(this, "Chạm vào mã QR để hoàn tất thanh toán", Toast.LENGTH_LONG).show();
 
-        // Biến mã QR thành nút bấm ẩn (dự phòng nếu người dùng muốn bấm ngay)
+        // Chuyển sự kiện thanh toán thành công vào sự kiện onClick của mã QR
         qrCodeImageView.setOnClickListener(v -> {
             proceedToSuccessScreen();
         });
@@ -59,27 +60,13 @@ public class QrPaymentActivity extends AppCompatActivity {
                 .into(qrCodeImageView);
     }
 
-    private void startPaymentSimulation() {
-        simulationHandler = new Handler(Looper.getMainLooper());
-        simulationRunnable = () -> {
-            if (!isFinishing() && !isDestroyed()) {
-                proceedToSuccessScreen();
-            }
-        };
-        // Tự động chuyển sau 5 giây
-        simulationHandler.postDelayed(simulationRunnable, 5000); 
-    }
-
     private void proceedToSuccessScreen() {
-        // Dừng các bộ đếm giờ
+        // Dừng bộ đếm giờ nếu có
         if (visualCountDownTimer != null) {
             visualCountDownTimer.cancel();
         }
-        if (simulationHandler != null && simulationRunnable != null) {
-            simulationHandler.removeCallbacks(simulationRunnable);
-        }
 
-        // Kiểm tra activity còn hoạt động không
+        // Chuyển sang trang PaymentSuccessActivity
         if (!isFinishing() && !isDestroyed()) {
             Intent intent = new Intent(QrPaymentActivity.this, PaymentSuccessActivity.class);
             intent.putExtra("ORDER_ID", orderId);
@@ -100,7 +87,8 @@ public class QrPaymentActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 countdownTimerTextView.setText("Mã đã hết hạn");
-                qrCodeImageView.setOnClickListener(null); 
+                qrCodeImageView.setOnClickListener(null); // Vô hiệu hóa click khi hết hạn
+                Toast.makeText(QrPaymentActivity.this, "Mã QR đã hết hạn. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
             }
         }.start();
     }
@@ -110,9 +98,6 @@ public class QrPaymentActivity extends AppCompatActivity {
         super.onDestroy();
         if (visualCountDownTimer != null) {
             visualCountDownTimer.cancel();
-        }
-        if (simulationHandler != null && simulationRunnable != null) {
-            simulationHandler.removeCallbacks(simulationRunnable);
         }
     }
 }

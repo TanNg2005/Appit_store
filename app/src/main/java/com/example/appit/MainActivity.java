@@ -2,6 +2,8 @@ package com.example.appit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,12 +16,12 @@ import androidx.appcompat.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,13 +32,16 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import me.relex.circleindicator.CircleIndicator3;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_CATEGORY = 1001; // Mã request code
+    private static final int REQUEST_CATEGORY = 1001;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -50,6 +55,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private GridAdapter adapter;
     private TextView notificationBadgeTextView;
     private ListenerRegistration notificationListener;
+    private TextView cartBadgeTextView;
+
+    // Banner components
+    private ViewPager2 bannerViewPager;
+    private CircleIndicator3 bannerIndicator;
+    private Handler bannerHandler = new Handler(Looper.getMainLooper());
+    private Runnable bannerRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +76,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         updateNavHeader();
         checkAdminStatus();
 
+        // Setup Banner
+        setupBanner();
+
         recyclerView = findViewById(R.id.product_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         
@@ -74,14 +89,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         loadProducts();
 
-        // Handle back press to close drawer if open
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    // Nếu đang lọc theo danh mục, back sẽ clear bộ lọc
                     if (productList.size() != fullProductList.size()) {
                         filterByText("");
                         Toast.makeText(MainActivity.this, "Đã xóa bộ lọc", Toast.LENGTH_SHORT).show();
@@ -94,12 +107,64 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
     }
 
+    private void setupBanner() {
+        bannerViewPager = findViewById(R.id.banner_view_pager);
+        bannerIndicator = findViewById(R.id.banner_indicator);
+
+        List<Integer> bannerImages = Arrays.asList(
+                R.drawable.banner_1,
+                R.drawable.banner_2,
+                R.drawable.banner_3,
+                R.drawable.banner_4,
+                R.drawable.banner_5
+        );
+
+        BannerAdapter bannerAdapter = new BannerAdapter(this, bannerImages);
+        bannerViewPager.setAdapter(bannerAdapter);
+        bannerIndicator.setViewPager(bannerViewPager);
+
+        // Auto scroll logic fixed to avoid memory issues
+        bannerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (bannerViewPager.getAdapter() != null) {
+                    int currentItem = bannerViewPager.getCurrentItem();
+                    int totalItems = bannerViewPager.getAdapter().getItemCount();
+                    
+                    if (totalItems > 0) {
+                        int nextItem = (currentItem + 1) % totalItems;
+                        bannerViewPager.setCurrentItem(nextItem, true);
+                    }
+                    
+                    bannerHandler.postDelayed(this, 3000); // 3 seconds
+                }
+            }
+        };
+        
+        bannerViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                bannerHandler.removeCallbacks(bannerRunnable);
+                bannerHandler.postDelayed(bannerRunnable, 3000);
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         listenForUnreadNotifications();
-        // Update header again in case user changed profile info
+        CartManager.getInstance().loadCartItems(items -> {
+            updateCartBadge();
+        });
         updateNavHeader();
+        
+        // Resume banner auto scroll
+        if (bannerHandler != null && bannerRunnable != null) {
+            bannerHandler.removeCallbacks(bannerRunnable); // Xóa callback cũ để tránh bị duplicate
+            bannerHandler.postDelayed(bannerRunnable, 3000);
+        }
     }
 
     @Override
@@ -108,8 +173,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (notificationListener != null) {
             notificationListener.remove();
         }
+        // Pause banner auto scroll
+        if (bannerHandler != null && bannerRunnable != null) {
+            bannerHandler.removeCallbacks(bannerRunnable);
+        }
     }
 
+    // ... (Rest of the methods remain unchanged)
+    
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -175,7 +246,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         adapter.notifyDataSetChanged();
     }
 
-    // Hàm lọc theo danh mục
     private void filterByCategory(String category) {
         productList.clear();
         if (category == null || category.isEmpty()) {
@@ -206,12 +276,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         
         final MenuItem notificationItem = menu.findItem(R.id.action_notification);
-        View actionView = notificationItem.getActionView();
-        notificationBadgeTextView = actionView.findViewById(R.id.notification_badge);
+        View notificationActionView = notificationItem.getActionView();
+        notificationBadgeTextView = notificationActionView.findViewById(R.id.notification_badge);
 
-        actionView.setOnClickListener(v -> onOptionsItemSelected(notificationItem));
-
+        notificationActionView.setOnClickListener(v -> onOptionsItemSelected(notificationItem));
         listenForUnreadNotifications();
+
+        final MenuItem cartItem = menu.findItem(R.id.action_cart);
+        View cartActionView = cartItem.getActionView();
+        cartBadgeTextView = cartActionView.findViewById(R.id.cart_badge);
+        
+        cartActionView.setOnClickListener(v -> {
+            startActivity(new Intent(this, CartActivity.class));
+        });
+        
+        CartManager.getInstance().loadCartItems(items -> {
+            updateCartBadge();
+        });
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -228,6 +309,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
         return true;
+    }
+    
+    private void updateCartBadge() {
+        if (cartBadgeTextView != null) {
+            int cartCount = CartManager.getInstance().getTotalItemCount();
+            if (cartCount > 0) {
+                cartBadgeTextView.setText(String.valueOf(cartCount));
+                cartBadgeTextView.setVisibility(View.VISIBLE);
+            } else {
+                cartBadgeTextView.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void listenForUnreadNotifications() {
@@ -275,23 +368,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         TextView navHeaderName = headerView.findViewById(R.id.nav_header_name);
         TextView navHeaderEmail = headerView.findViewById(R.id.nav_header_email);
         
-        // Đặt mặc định "APPIT STORE" in đậm
         navHeaderName.setText("APPIT STORE");
         
         FirebaseUser currentUser = mAuth.getCurrentUser();
         
         if (currentUser != null) {
-            // Ưu tiên 1: Dùng displayName có sẵn trong Auth (nhanh hơn vì không cần query DB)
             String authDisplayName = currentUser.getDisplayName();
             if (authDisplayName != null && !authDisplayName.isEmpty()) {
                  navHeaderEmail.setText(authDisplayName);
             } else {
-                 // Ưu tiên 2: Nếu Auth chưa có displayName, fetch từ Firestore
                  db.collection("users").document(currentUser.getUid())
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                        if (documentSnapshot.exists()) {
-                           // Nếu có trường displayName trong DB thì dùng luôn
                            if (documentSnapshot.contains("displayName")) {
                                String dbDisplayName = documentSnapshot.getString("displayName");
                                if (dbDisplayName != null && !dbDisplayName.isEmpty()) {
@@ -300,7 +389,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                }
                            }
                            
-                           // Nếu chưa có displayName, ghép từ firstName + lastName
                            String firstName = documentSnapshot.getString("firstName");
                            String lastName = documentSnapshot.getString("lastName");
                            String fullName = "";
@@ -343,10 +431,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            // Reset filter
             filterByText("");
         } else if (id == R.id.nav_category) {
-            // Mở CategoryActivity và chờ kết quả trả về
             startActivityForResult(new Intent(this, CategoryActivity.class), REQUEST_CATEGORY);
         } else if (id == R.id.nav_cart) {
             startActivity(new Intent(this, CartActivity.class));

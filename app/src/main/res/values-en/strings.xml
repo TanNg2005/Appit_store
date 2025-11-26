@@ -8,6 +8,7 @@
     <string name="nav_category">Categories</string> <!-- Mới -->
     <string name="nav_cart">Cart</string>
     <string name="nav_account">Account</string>
+    <string name="nav_address_book">Address Book</string>
     <string name="nav_favorite">Wishlist</string>
     <string name="nav_filter">Filter Products</string>
     <string name="admin_panel">Admin Panel</string>
@@ -48,5 +49,29 @@
 
     <!-- Main Screen -->
     <string name="featured_products">Featured Products</string>
+
+    <!-- Address Book -->
+    <string name="address_book_title">Address Book</string>
+    <string name="address_book_select_title">Select Address</string>
+    <string name="address_book_empty">No address found. Add a new one!</string>
+    <string name="address_add_new">Add New Address</string>
+    <string name="address_edit">Edit Address</string>
+    <string name="address_recipient_info">Recipient Info</string>
+    <string name="address_hint_name">Full Name</string>
+    <string name="address_hint_phone">Phone Number</string>
+    <string name="address_location_info">Delivery Address</string>
+    <string name="address_hint_street">House No, Street Name</string>
+    <string name="address_hint_district">Ward/Commune, District</string>
+    <string name="address_hint_city">Province/City</string>
+    <string name="address_set_default">Set as default address</string>
+    <string name="address_save">Save</string>
+    <string name="address_cancel">Cancel</string>
+    <string name="address_delete_title">Delete Address</string>
+    <string name="address_delete_message">Are you sure you want to delete this address?</string>
+    <string name="address_delete_confirm">Delete</string>
+    <string name="address_default_badge">Default</string>
+    <string name="address_btn_set_default">Set Default</string>
+    <string name="address_btn_edit">Edit</string>
+    <string name="address_btn_delete">Delete</string>
 
 </resources>

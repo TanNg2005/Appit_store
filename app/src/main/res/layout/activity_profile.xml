@@ -65,12 +65,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    app:boxStrokeColor="@color/black"
+                    app:hintTextColor="@color/black"
+                    app:cursorColor="@color/black"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_text_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false" />
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"
+                        android:enabled="false"
+                        android:inputType="text"
+                        android:imeOptions="actionNext" /> <!-- Thêm imeOptions -->
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
@@ -92,11 +99,16 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxStrokeColor="@color/black"
+                app:hintTextColor="@color/black"
+                app:cursorColor="@color/black"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edit_text_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textCursorDrawable="@null"
                     android:enabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,12 +128,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    app:boxStrokeColor="@color/black"
+                    app:hintTextColor="@color/black"
+                    app:cursorColor="@color/black"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_text_phone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false" />
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"
+                        android:enabled="false"
+                        android:inputType="phone"
+                        android:imeOptions="actionDone" /> <!-- Thêm imeOptions -->
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
@@ -149,11 +168,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    app:boxStrokeColor="@color/black"
+                    app:hintTextColor="@color/black"
+                    app:cursorColor="@color/black"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_text_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
                 

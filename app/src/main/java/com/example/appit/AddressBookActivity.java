@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -95,15 +96,22 @@ public class AddressBookActivity extends BaseActivity implements AddressBookAdap
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_address_full, null);
         builder.setView(dialogView);
-        builder.setTitle(existingAddress == null ? R.string.address_add_new : R.string.address_edit);
+        // Không set title và buttons mặc định của AlertDialog nữa vì mình sẽ dùng custom layout
+        
+        final AlertDialog dialog = builder.create();
 
+        // Tìm các view trong dialogView
+        // Bỏ dòng này vì trong layout không có ID này: TextView title = dialogView.findViewById(R.id.address_dialog_title); 
+        
         EditText editName = dialogView.findViewById(R.id.edit_recipient_name);
         EditText editPhone = dialogView.findViewById(R.id.edit_recipient_phone);
         EditText editStreet = dialogView.findViewById(R.id.edit_street);
         EditText editDistrict = dialogView.findViewById(R.id.edit_district);
         EditText editCity = dialogView.findViewById(R.id.edit_city);
         CheckBox cbDefault = dialogView.findViewById(R.id.cb_set_default);
+        Button btnSave = dialogView.findViewById(R.id.btn_save_address);
 
+        // Set data
         if (existingAddress != null) {
             editName.setText(existingAddress.getRecipientName());
             editPhone.setText(existingAddress.getPhone());
@@ -112,11 +120,11 @@ public class AddressBookActivity extends BaseActivity implements AddressBookAdap
             editCity.setText(existingAddress.getCity());
             cbDefault.setChecked(existingAddress.isDefault());
         } else {
-            // Nếu là địa chỉ đầu tiên, mặc định check
             if (addressList.isEmpty()) cbDefault.setChecked(true);
         }
 
-        builder.setPositiveButton(R.string.address_save, (dialog, which) -> {
+        // Xử lý sự kiện click nút Lưu
+        btnSave.setOnClickListener(v -> {
             String name = editName.getText().toString().trim();
             String phone = editPhone.getText().toString().trim();
             String street = editStreet.getText().toString().trim();
@@ -138,10 +146,10 @@ public class AddressBookActivity extends BaseActivity implements AddressBookAdap
             newAddress.setDefault(isDefault);
 
             saveAddress(newAddress, position);
+            dialog.dismiss();
         });
 
-        builder.setNegativeButton(R.string.address_cancel, null);
-        builder.show();
+        dialog.show();
     }
 
     private void saveAddress(User.ShippingAddress newAddress, int position) {

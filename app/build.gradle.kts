@@ -65,5 +65,8 @@ dependencies {
 
     // Circle Image View for Profile
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    
+    // Circle Indicator for Banner
+    implementation("me.relex:circleindicator:2.1.6")
 
 }

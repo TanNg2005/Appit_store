@@ -7,6 +7,24 @@
     android:background="@color/app_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <!-- Banner Area -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <!-- Trả về chiều cao 200dp cho cân đối giao diện -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/banner_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <me.relex.circleindicator.CircleIndicator3
+            android:id="@+id/banner_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom|center_horizontal" />
+    </FrameLayout>
+
     <TextView
         android:id="@+id/textWelcome"
         android:layout_width="wrap_content"
