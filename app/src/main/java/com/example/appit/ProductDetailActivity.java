@@ -251,22 +251,44 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
+        // SỬA LỖI: Kiểm tra linh hoạt trạng thái đơn hàng (không phân biệt hoa thường, hỗ trợ cả tiếng Anh)
         db.collection("orders")
             .whereEqualTo("userId", currentUser.getUid())
-            .whereEqualTo("status", "Đã hoàn thành")
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
                 boolean hasBought = false;
                 if (!queryDocumentSnapshots.isEmpty()) {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        // Lấy trạng thái trực tiếp từ document để kiểm tra trước
+                        String status = doc.getString("status");
+                        if (status != null) status = status.trim();
+                        
+                        Log.d(TAG, "Found order with status: " + status);
+                        
+                        // Chấp nhận các trạng thái hoàn thành khác nhau
+                        boolean isCompleted = status != null && (
+                                status.equalsIgnoreCase("Đã hoàn thành") || 
+                                status.equalsIgnoreCase("Đã nhận hàng") || 
+                                status.equalsIgnoreCase("Completed") || 
+                                status.equalsIgnoreCase("Delivered") ||
+                                status.equalsIgnoreCase("Shipped") ||
+                                status.equalsIgnoreCase("Success")
+                        );
+                        
+                        if (!isCompleted) continue;
+
                         Order order = doc.toObject(Order.class);
                         if (order.getItems() != null) {
                             for (Order.OrderItem item : order.getItems()) {
-                                if (currentProduct != null && item.getProductId() != null && 
-                                    (item.getProductId().equals(String.valueOf(currentProduct.getId())) || 
-                                     item.getProductId().equals(currentProduct.getDocumentId()))) {
-                                    hasBought = true;
-                                    break;
+                                if (currentProduct != null && item.getProductId() != null) {
+                                    // So sánh ID (cả dạng số và dạng chuỗi document ID)
+                                    boolean matchId = item.getProductId().equals(String.valueOf(currentProduct.getId()));
+                                    boolean matchDocId = currentProduct.getDocumentId() != null && item.getProductId().equals(currentProduct.getDocumentId());
+                                    
+                                    if (matchId || matchDocId) {
+                                        hasBought = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -277,11 +299,14 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (btnAddReview != null) {
                     if (hasBought) {
                         btnAddReview.setVisibility(View.VISIBLE);
+                        Log.d(TAG, "CheckReview: Nút đánh giá đã hiện");
                     } else {
                         btnAddReview.setVisibility(View.GONE);
+                        Log.d(TAG, "CheckReview: Không đủ điều kiện đánh giá (Chưa mua hoặc đơn chưa hoàn thành)");
                     }
                 }
-            });
+            })
+            .addOnFailureListener(e -> Log.e(TAG, "Lỗi khi kiểm tra quyền đánh giá", e));
     }
     
     // Kiểm tra sản phẩm có trong danh sách yêu thích không

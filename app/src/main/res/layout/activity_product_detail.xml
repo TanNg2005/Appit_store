@@ -166,13 +166,16 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
                 
+                <!-- SỬA LỖI: Làm nút đánh giá nổi bật hơn và mặc định hiển thị để test -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_add_review"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Viết đánh giá"
-                    android:visibility="gone"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="@color/accent"
+                    android:visibility="visible"
+                    />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

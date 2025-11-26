@@ -21,7 +21,7 @@ android {
 
     // Cấu hình chữ ký dùng chung cho tất cả mọi người
     signingConfigs {
-        create("debug") {
+        create("localDebug") {
             storeFile = file("debug.keystore") // File này sẽ nằm trong thư mục app/
             storePassword = "android"
             keyAlias = "androiddebugkey"
@@ -31,7 +31,7 @@ android {
 
     buildTypes {
         debug {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("localDebug")
         }
         release {
             isMinifyEnabled = false
