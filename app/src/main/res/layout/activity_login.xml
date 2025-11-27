@@ -38,7 +38,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="10dp"
         android:hint="Password"
         app:endIconMode="password_toggle"
         app:boxStrokeColor="@color/black"
@@ -54,6 +54,16 @@
             android:textCursorDrawable="@null" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/btnForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quên mật khẩu?"
+        android:textColor="@color/accent"
+        android:layout_gravity="end"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
@@ -68,9 +78,9 @@
         android:id="@+id/btnGoToRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chưa có tài khoản? Đăng ký ngay"
         android:layout_marginTop="20dp"
-        android:textColor="@color/accent"/>
+        android:text="Chưa có tài khoản? Đăng ký ngay"
+        android:textColor="@color/accent" />
 
     <ProgressBar
         android:id="@+id/progressBar"
