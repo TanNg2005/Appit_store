@@ -1,6 +1,8 @@
 package com.example.appit;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
@@ -40,13 +44,31 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         Product product = cartItem.getProduct();
 
         holder.name.setText(product.getTitle());
-        
-        // Thêm đuôi VND
-        String priceWithUnit = product.getPrice();
-        if (!priceWithUnit.toLowerCase().contains("vnd")) {
-             priceWithUnit += " VND";
+
+        // Logic hiển thị giá có giảm giá
+        double priceValue = 0;
+        try {
+            String cleanPrice = product.getPrice().replaceAll("[^\\d]", "");
+            if (!cleanPrice.isEmpty()) {
+                priceValue = Double.parseDouble(cleanPrice);
+            }
+        } catch (Exception e) {
+            priceValue = 0;
         }
-        holder.price.setText(priceWithUnit);
+
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+        if (product.getDiscountPercentage() > 0) {
+            double discountedPrice = priceValue * (1 - product.getDiscountPercentage() / 100);
+            // Làm tròn đến hàng nghìn
+            long roundedDiscountedPrice = Math.round(discountedPrice / 1000) * 1000;
+            
+            holder.price.setText(formatter.format(roundedDiscountedPrice) + " VND");
+            // Có thể thêm logic hiển thị giá gốc gạch ngang nếu layout hỗ trợ, 
+            // nhưng hiện tại chỉ cần hiển thị giá đúng để thanh toán.
+        } else {
+            holder.price.setText(formatter.format(priceValue) + " VND");
+        }
         
         holder.quantity.setText(String.valueOf(cartItem.getQuantity()));
 
@@ -59,6 +81,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             if (context instanceof CartActivity) {
                 ((CartActivity) context).updateTotalPrice();
             }
+        });
+
+        // Bấm vào item -> chuyển sang trang chi tiết sản phẩm
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            // Truyền cả object product nếu có thể, hoặc ID document
+            if (product.getDocumentId() != null) {
+                intent.putExtra("PRODUCT_ID", product.getDocumentId());
+            }
+            intent.putExtra("product", product);
+            context.startActivity(intent);
         });
 
         // Logic nút Tăng số lượng

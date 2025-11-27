@@ -36,13 +36,35 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/productImage"
+            
+            <!-- Image Container with Discount Badge -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="centerCrop"
-                tools:src="@drawable/shoe_placeholder" />
+                android:layout_height="300dp">
+                
+                <ImageView
+                    android:id="@+id/productImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/shoe_placeholder" />
+                    
+                <TextView
+                    android:id="@+id/productDiscountBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#F44336"
+                    android:textColor="@android:color/white"
+                    android:text="-34%"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="8dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/productName"
@@ -89,15 +111,33 @@
                 android:textSize="14sp"
                 tools:text="Đã bán: 100" />
 
-            <TextView
-                android:id="@+id/productPrice"
-                android:layout_width="wrap_content"
+            <!-- Price Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/accent"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                tools:text="Giá tiền" />
+                android:orientation="vertical"
+                android:layout_marginTop="8dp">
+                
+                <TextView
+                    android:id="@+id/productPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    tools:text="91.740đ" />
+                    
+                <TextView
+                    android:id="@+id/productOriginalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"
+                    tools:text="139.000đ"
+                    tools:visibility="visible"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

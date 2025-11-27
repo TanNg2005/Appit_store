@@ -10,6 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Paint;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -419,6 +422,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.productImage);
         TextView textName = findViewById(R.id.productName);
         TextView textPrice = findViewById(R.id.productPrice);
+        TextView textOriginalPrice = findViewById(R.id.productOriginalPrice); // New view for original price
+        TextView textDiscountBadge = findViewById(R.id.productDiscountBadge); // New view for discount badge
+        
         TextView textDescription = findViewById(R.id.productDescription);
         TextView textBrand = findViewById(R.id.productBrand);
         TextView textCategory = findViewById(R.id.productCategory);
@@ -445,12 +451,44 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (ratingBarIndicator != null) ratingBarIndicator.setRating((float) product.getRating());
         if (ratingTextIndicator != null) ratingTextIndicator.setText(String.format(java.util.Locale.US, "(%.1f)", product.getRating()));
         
+        // Handle Price and Discount
         if (textPrice != null && product.getPrice() != null) {
-            String priceWithUnit = product.getPrice();
-            if (!priceWithUnit.toLowerCase().contains("vnd")) {
-                 priceWithUnit += " VND";
+            double priceValue = 0;
+            try {
+                String cleanPrice = product.getPrice().replaceAll("[^\\d]", "");
+                if (!cleanPrice.isEmpty()) {
+                     priceValue = Double.parseDouble(cleanPrice);
+                }
+            } catch (NumberFormatException e) {
+                priceValue = 0;
             }
-            textPrice.setText(priceWithUnit);
+            
+            NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+            
+            if (product.getDiscountPercentage() > 0) {
+                double discountedPrice = priceValue * (1 - product.getDiscountPercentage() / 100);
+                long roundedDiscountedPrice = Math.round(discountedPrice / 1000) * 1000;
+                
+                textPrice.setText(formatter.format(roundedDiscountedPrice) + "đ");
+                textPrice.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+                
+                if (textOriginalPrice != null) {
+                    textOriginalPrice.setText(formatter.format(priceValue) + "đ");
+                    textOriginalPrice.setPaintFlags(textOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    textOriginalPrice.setVisibility(View.VISIBLE);
+                }
+                
+                if (textDiscountBadge != null) {
+                    textDiscountBadge.setText("-" + (int)product.getDiscountPercentage() + "%");
+                    textDiscountBadge.setVisibility(View.VISIBLE);
+                }
+            } else {
+                textPrice.setText(formatter.format(priceValue) + "đ");
+                textPrice.setTextColor(getResources().getColor(R.color.accent)); // Or default color
+                
+                if (textOriginalPrice != null) textOriginalPrice.setVisibility(View.GONE);
+                if (textDiscountBadge != null) textDiscountBadge.setVisibility(View.GONE);
+            }
         }
         
         if (textDescription != null) textDescription.setText(product.getDescription());

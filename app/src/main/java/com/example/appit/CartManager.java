@@ -180,8 +180,16 @@ public class CartManager {
         double total = 0;
         for (CartItem item : getSelectedItems()) {
             try {
-                String priceString = item.getProduct().getPrice().replaceAll("[^\\d]", "");
+                Product product = item.getProduct();
+                String priceString = product.getPrice().replaceAll("[^\\d]", "");
                 double price = Double.parseDouble(priceString);
+
+                if (product.getDiscountPercentage() > 0) {
+                    double discountedPrice = price * (1 - product.getDiscountPercentage() / 100);
+                    // Rounding to thousands as per request
+                    price = Math.round(discountedPrice / 1000) * 1000;
+                }
+                
                 total += price * item.getQuantity(); 
             } catch (Exception e) {
                 Log.e(TAG, "Error calculating total price", e);

@@ -1,6 +1,8 @@
 package com.example.appit;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +36,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +64,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     // Banner components
     private ViewPager2 bannerViewPager;
     private CircleIndicator3 bannerIndicator;
-    private Handler bannerHandler = new Handler(Looper.getMainLooper());
+    private Handler bannerHandler;
     private Runnable bannerRunnable;
+
+    // Nav Filter Buttons
+    private MaterialButton btnNavFeatured, btnNavSale, btnNavNew, btnNavVoucher, btnNavFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +83,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         updateNavHeader();
         checkAdminStatus();
 
+        // Init Handler here to ensure it's associated with the main looper
+        bannerHandler = new Handler(Looper.getMainLooper());
+
         // Setup Banner
         setupBanner();
+
+        // Setup Nav Buttons
+        setupNavButtons();
 
         recyclerView = findViewById(R.id.product_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -97,6 +110,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 } else {
                     if (productList.size() != fullProductList.size()) {
                         filterByText("");
+                        // Reset Nav Buttons visually to "Featured"
+                        if (btnNavFeatured != null) updateNavButtonState(btnNavFeatured);
                         Toast.makeText(MainActivity.this, "Đã xóa bộ lọc", Toast.LENGTH_SHORT).show();
                     } else {
                         setEnabled(false);
@@ -105,6 +120,121 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 }
             }
         });
+    }
+
+    private void setupNavButtons() {
+        btnNavFeatured = findViewById(R.id.btn_nav_featured);
+        btnNavSale = findViewById(R.id.btn_nav_sale);
+        btnNavNew = findViewById(R.id.btn_nav_new);
+        btnNavVoucher = findViewById(R.id.btn_nav_voucher);
+        btnNavFavorite = findViewById(R.id.btn_nav_favorite);
+
+        View.OnClickListener navClickListener = v -> {
+            MaterialButton btn = (MaterialButton) v;
+            updateNavButtonState(btn);
+            
+            int id = v.getId();
+            if (id == R.id.btn_nav_featured) {
+                filterByFeatured();
+            } else if (id == R.id.btn_nav_sale) {
+                filterBySale();
+            } else if (id == R.id.btn_nav_new) {
+                filterByNew();
+            } else if (id == R.id.btn_nav_voucher) {
+                Toast.makeText(this, "Voucher functionality coming soon!", Toast.LENGTH_SHORT).show();
+            } else if (id == R.id.btn_nav_favorite) {
+                filterByHighRating();
+            }
+        };
+
+        if (btnNavFeatured != null) btnNavFeatured.setOnClickListener(navClickListener);
+        if (btnNavSale != null) btnNavSale.setOnClickListener(navClickListener);
+        if (btnNavNew != null) btnNavNew.setOnClickListener(navClickListener);
+        if (btnNavVoucher != null) btnNavVoucher.setOnClickListener(navClickListener);
+        if (btnNavFavorite != null) btnNavFavorite.setOnClickListener(navClickListener);
+        
+        // Set initial state
+        if (btnNavFeatured != null) updateNavButtonState(btnNavFeatured);
+    }
+
+    private void updateNavButtonState(MaterialButton selectedButton) {
+        MaterialButton[] buttons = {btnNavFeatured, btnNavSale, btnNavNew, btnNavVoucher, btnNavFavorite};
+        
+        // Using ContextCompat logic for colors to avoid deprecated method warnings
+        int colorPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.purple_500);
+        int colorWhite = androidx.core.content.ContextCompat.getColor(this, R.color.white);
+        
+        for (MaterialButton btn : buttons) {
+            if (btn == null) continue; 
+            if (btn == selectedButton) {
+                btn.setBackgroundTintList(ColorStateList.valueOf(colorPrimary));
+                btn.setTextColor(colorWhite);
+                btn.setStrokeWidth(0);
+            } else {
+                btn.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+                btn.setTextColor(colorPrimary);
+                btn.setStrokeColor(ColorStateList.valueOf(colorPrimary));
+                btn.setStrokeWidth(3); 
+            }
+        }
+    }
+
+    private void filterByFeatured() {
+        productList.clear();
+        // Sort by Sales (minimumOrderQuantity) descending for "Featured" as requested
+        List<Product> sorted = new ArrayList<>(fullProductList);
+        sorted.sort((p1, p2) -> Integer.compare(p2.getMinimumOrderQuantity(), p1.getMinimumOrderQuantity()));
+        
+        productList.addAll(sorted);
+        adapter.notifyDataSetChanged();
+        
+        TextView textWelcome = findViewById(R.id.textWelcome);
+        if(textWelcome != null) textWelcome.setText("Sản phẩm nổi bật");
+    }
+
+    private void filterByHighRating() {
+        productList.clear();
+        // Filter products with rating > 4.0
+        List<Product> filtered = fullProductList.stream()
+            .filter(p -> p.getRating() > 4.0)
+            .collect(Collectors.toList());
+            
+        // Sort by Rating descending
+        filtered.sort((p1, p2) -> Double.compare(p2.getRating(), p1.getRating()));
+        
+        productList.addAll(filtered);
+        adapter.notifyDataSetChanged();
+        
+        TextView textWelcome = findViewById(R.id.textWelcome);
+        if(textWelcome != null) textWelcome.setText("Sản phẩm yêu thích (> 4 sao)");
+    }
+
+    private void filterBySale() {
+        productList.clear();
+        List<Product> filtered = fullProductList.stream()
+            .filter(p -> p.getDiscountPercentage() > 0)
+            .collect(Collectors.toList());
+        productList.addAll(filtered);
+        adapter.notifyDataSetChanged();
+        
+        TextView textWelcome = findViewById(R.id.textWelcome);
+        if(textWelcome != null) textWelcome.setText("Đang giảm giá");
+    }
+
+    private void filterByNew() {
+        productList.clear();
+        List<Product> sorted = new ArrayList<>(fullProductList);
+        // Sort by ID descending (assuming newer products have higher IDs)
+        sorted.sort((p1, p2) -> {
+             Long id1 = p1.getId() != null ? p1.getId() : 0L;
+             Long id2 = p2.getId() != null ? p2.getId() : 0L;
+             return id2.compareTo(id1);
+        });
+        productList.addAll(sorted);
+        adapter.notifyDataSetChanged();
+        
+        TextView textWelcome = findViewById(R.id.textWelcome);
+        if(textWelcome != null) textWelcome.setText("Sản phẩm mới");
     }
 
     private void setupBanner() {
@@ -184,7 +314,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Appit Store");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Appit Store");
+        }
     }
 
     private void setupDrawer() {
@@ -201,7 +333,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (currentUser != null) {
             DocumentReference userRef = db.collection("users").document(currentUser.getUid());
             userRef.get().addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists() && documentSnapshot.contains("isAdmin") && documentSnapshot.getBoolean("isAdmin") == true) {
+                if (documentSnapshot.exists() && Boolean.TRUE.equals(documentSnapshot.getBoolean("isAdmin"))) {
                     navigationView.getMenu().setGroupVisible(R.id.admin_panel_group, true);
                 }
             });
@@ -223,8 +355,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 Log.e(TAG, "Error converting document to Product object: " + document.getId(), e);
                             }
                         }
-                        filterByText("");
-                        adapter.notifyDataSetChanged();
+                        // Initial filter (Featured)
+                        filterByFeatured(); 
                     } else {
                         Log.w(TAG, "Error getting documents.", task.getException());
                     }
@@ -340,7 +472,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         int unreadCount = 0;
                         for (QueryDocumentSnapshot doc : snapshots) {
                             try {
-                                if (doc.contains("isRead") && doc.getBoolean("isRead") == false) {
+                                if (doc.contains("isRead") && Boolean.FALSE.equals(doc.getBoolean("isRead"))) {
                                     unreadCount++;
                                 }
                             } catch (Exception ex){
@@ -433,6 +565,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (id == R.id.nav_home) {
             filterByText("");
         } else if (id == R.id.nav_category) {
+            // startActivityForResult is deprecated but kept for minimal changes as requested
+            // Ideally should use ActivityResultLauncher
             startActivityForResult(new Intent(this, CategoryActivity.class), REQUEST_CATEGORY);
         } else if (id == R.id.nav_cart) {
             startActivity(new Intent(this, CartActivity.class));
