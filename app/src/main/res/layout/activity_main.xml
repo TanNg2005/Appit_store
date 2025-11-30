@@ -15,13 +15,17 @@
         android:background="@color/app_background" 
         android:orientation="vertical">
 
-        <!-- 1.1. Thanh Toolbar -->
+        <!-- 1.1. Thanh Toolbar - Đổi sang màu xanh Accent nổi bật -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            android:background="@color/accent"
+            app:titleTextColor="@android:color/white"
+            app:title="Appit Store"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" 
+            app:elevation="4dp"/> 
 
         <!-- 1.2. Nội dung trang (chứa GridView) -->
         <include layout="@layout/content_main" />

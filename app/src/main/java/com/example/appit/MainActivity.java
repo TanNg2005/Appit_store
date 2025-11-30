@@ -75,6 +75,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Khởi động Service theo dõi đơn hàng
+        startService(new Intent(this, OrderMonitorService.class));
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 

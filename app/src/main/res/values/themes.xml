@@ -2,14 +2,14 @@
     <!-- Base application theme. -->
     <style name="Theme.Appit" parent="Theme.MaterialComponents.Light.NoActionBar">
 
-        <!-- Primary brand color. -->
+        <!-- Primary brand color (Giờ đây dùng Surface để tạo nền trắng hiện đại cho App Bar nếu có) -->
         <item name="colorPrimary">@color/surface</item>
         <item name="colorPrimaryVariant">@color/app_background</item>
         <item name="colorOnPrimary">@color/text_primary</item>
 
-        <!-- Secondary brand color. -->
+        <!-- Secondary brand color (Màu nhấn chính) -->
         <item name="colorSecondary">@color/accent</item>
-        <item name="colorSecondaryVariant">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent_dark</item>
         <item name="colorOnSecondary">@color/white</item>
 
         <!-- Background colors -->
@@ -20,11 +20,27 @@
         <item name="colorOnBackground">@color/text_primary</item>
         <item name="colorOnSurface">@color/text_primary</item>
 
-        <!-- Status bar color. -->
+        <!-- Status bar color (Đồng bộ với nền) -->
         <item name="android:statusBarColor">@color/app_background</item>
+        <!-- Làm icon trên status bar màu tối cho nền sáng -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Customize Button Style -->
+        <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button.UnelevatedButton</item>
 
         <!-- Default text colors -->
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textColorHint">@color/text_secondary</item>
+        
+        <!-- Ripple effect color -->
+        <item name="colorControlHighlight">@color/accent_light</item>
+    </style>
+    
+    <!-- Style riêng cho Button để bo tròn và đậm chất Tech -->
+    <style name="Widget.Appit.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingVertical">14dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 </resources>

@@ -1,15 +1,15 @@
 package com.example.appit;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SettingsActivity extends BaseActivity {
@@ -23,10 +23,13 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = findViewById(R.id.settings_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.nav_settings);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // SỬA LỖI: Thay thế Toolbar bằng nút Back tùy chỉnh
+        // Toolbar toolbar = findViewById(R.id.settings_toolbar);
+        // setSupportActionBar(toolbar);
+        // getSupportActionBar().setTitle(R.string.nav_settings);
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
 
         sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE);
 

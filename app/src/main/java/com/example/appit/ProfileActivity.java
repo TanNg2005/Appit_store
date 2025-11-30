@@ -54,9 +54,12 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = findViewById(R.id.profile_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // SỬA LỖI: Thay thế Toolbar bằng nút Back tùy chỉnh
+        // Toolbar toolbar = findViewById(R.id.profile_toolbar);
+        // setSupportActionBar(toolbar);
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
 
         nameEditText = findViewById(R.id.edit_text_name);
         emailEditText = findViewById(R.id.edit_text_email);

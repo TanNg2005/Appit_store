@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,10 +36,13 @@ public class CartActivity extends AppCompatActivity {
 
         cartManager = CartManager.getInstance();
 
-        Toolbar toolbar = findViewById(R.id.cart_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Giỏ hàng");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // SỬA LỖI: Thay thế Toolbar cũ bằng nút Back tùy chỉnh
+        // Toolbar toolbar = findViewById(R.id.cart_toolbar);
+        // setSupportActionBar(toolbar);
+        // getSupportActionBar().setTitle("Giỏ hàng");
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
 
         recyclerView = findViewById(R.id.cart_recycler_view);
         totalPriceTextView = findViewById(R.id.cart_total_price);
@@ -171,11 +173,5 @@ public class CartActivity extends AppCompatActivity {
         double totalPrice = cartManager.calculateTotalPrice();
         NumberFormat format = NumberFormat.getInstance(new Locale("vi", "VN"));
         totalPriceTextView.setText(format.format(totalPrice) + " VND");
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 }

@@ -1,213 +1,307 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ProfileActivity">
+    android:background="@color/app_background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/profile_toolbar"
+    <!-- 1. Nội dung cuộn (Header Background + Form) -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
-        app:titleTextColor="@android:color/black"
-        app:theme="@style/ThemeOverlay.AppCompat.Light" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Header Background (Cuộn cùng nội dung để tạo hiệu ứng liền mạch) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:background="@drawable/bg_login_header" />
+
+            <!-- Main Content Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="100dp" 
+                android:paddingBottom="32dp"
+                android:clipToPadding="false">
+                
+                <!-- Avatar Area (Centered) -->
+                <FrameLayout
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="8dp">
+
+                    <!-- SỬA: Thêm background trắng để tránh bị lẹm màu -->
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_profile" 
+                        android:background="@drawable/circle_background"
+                        app:civ_circle_background_color="@color/surface"
+                        app:civ_border_color="@color/surface" 
+                        app:civ_border_width="4dp" />
+
+                    <!-- Nút chỉnh sửa Avatar -->
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btn_edit_profile_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:src="@android:drawable/ic_menu_edit"
+                        app:fabSize="mini"
+                        app:backgroundTint="@color/accent"
+                        app:tint="@android:color/white"
+                        app:elevation="4dp"
+                        app:borderWidth="0dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"/>
+                </FrameLayout>
+
+                <!-- Card Form -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="-60dp" 
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/surface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="70dp"
+                        android:paddingHorizontal="24dp"
+                        android:paddingBottom="32dp">
+
+                        <!-- Name -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_full_name"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
+                        
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="16dp">
+                            
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:boxStrokeColor="@color/accent"
+                                app:hintTextColor="@color/accent"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/edit_text_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_primary"
+                                    android:textCursorDrawable="@null"
+                                    android:enabled="false"
+                                    android:inputType="text"
+                                    android:paddingVertical="12dp"/> 
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <ImageButton
+                                android:id="@+id/btn_edit_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:padding="12dp"
+                                android:src="@android:drawable/ic_menu_edit"
+                                app:tint="@color/accent"/>
+                        </LinearLayout>
+
+                        <!-- Email -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_email" 
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
+                            
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            app:boxStrokeColor="@color/accent"
+                            app:hintTextColor="@color/accent"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edit_text_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_primary"
+                                android:textCursorDrawable="@null"
+                                android:enabled="false" 
+                                android:paddingVertical="12dp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Phone -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_phone" 
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
+                            
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="16dp">
+                            
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:boxStrokeColor="@color/accent"
+                                app:hintTextColor="@color/accent"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/edit_text_phone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_primary"
+                                    android:textCursorDrawable="@null"
+                                    android:enabled="false"
+                                    android:inputType="phone"
+                                    android:imeOptions="actionDone" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <ImageButton
+                                android:id="@+id/btn_edit_phone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:padding="12dp"
+                                android:src="@android:drawable/ic_menu_edit"
+                                app:tint="@color/accent"/>
+                        </LinearLayout>
+
+                        <!-- Address -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_address" 
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp"/>
+                            
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:boxStrokeColor="@color/accent"
+                                app:hintTextColor="@color/accent"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/edit_text_address"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_primary"
+                                    android:textCursorDrawable="@null"
+                                    android:enabled="false" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            
+                            <ImageButton
+                                android:id="@+id/btn_edit_address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:padding="12dp"
+                                android:src="@android:drawable/ic_menu_edit"
+                                app:tint="@color/accent"/>
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_save_profile"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="32dp"
+                            android:text="@string/profile_save_changes"
+                            android:textColor="@color/white"
+                            app:backgroundTint="@color/accent"
+                            app:cornerRadius="12dp" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_logout"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginHorizontal="40dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/nav_logout"
+                    android:textColor="@color/error"
+                    app:strokeColor="@color/error"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_logout"
+                    app:iconTint="@color/error"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
+    
+    <!-- 2. Toolbar (CỐ ĐỊNH TRÊN CÙNG - Khắc phục lỗi không bấm được Back) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"
+        android:elevation="10dp">
+        
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@android:color/white"
+            android:padding="8dp"
+            android:contentDescription="Back"/>
+            
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:text="Hồ sơ cá nhân"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_profile" 
-                    app:civ_border_color="#FF000000" 
-                    app:civ_border_width="2dp" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btn_edit_profile_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:src="@android:drawable/ic_menu_edit"
-                    app:fabSize="mini"
-                    app:elevation="4dp"
-                    app:borderWidth="0dp"/>
-            </FrameLayout>
-
-            <!-- Full Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/profile_full_name" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:boxStrokeColor="@color/black"
-                    app:hintTextColor="@color/black"
-                    app:cursorColor="@color/black"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:textCursorDrawable="@null"
-                        android:enabled="false"
-                        android:inputType="text"
-                        android:imeOptions="actionNext" /> <!-- Thêm imeOptions -->
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/btn_edit_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:src="@android:drawable/ic_menu_edit" />
-            </LinearLayout>
-
-            <!-- Email -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/profile_email" />
-                
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxStrokeColor="@color/black"
-                app:hintTextColor="@color/black"
-                app:cursorColor="@color/black"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_text_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textCursorDrawable="@null"
-                    android:enabled="false" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Phone -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/profile_phone" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:boxStrokeColor="@color/black"
-                    app:hintTextColor="@color/black"
-                    app:cursorColor="@color/black"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:textCursorDrawable="@null"
-                        android:enabled="false"
-                        android:inputType="phone"
-                        android:imeOptions="actionDone" /> <!-- Thêm imeOptions -->
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/btn_edit_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:src="@android:drawable/ic_menu_edit" />
-            </LinearLayout>
-
-            <!-- Address -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/profile_address" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:boxStrokeColor="@color/black"
-                    app:hintTextColor="@color/black"
-                    app:cursorColor="@color/black"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_text_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:textCursorDrawable="@null"
-                        android:enabled="false" />
-                </com.google.android.material.textfield.TextInputLayout>
-                
-                <ImageButton
-                    android:id="@+id/btn_edit_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:src="@android:drawable/ic_menu_edit" />
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save_profile"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/profile_save_changes"
-                app:cornerRadius="8dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_logout"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="@string/nav_logout"
-                android:textColor="@color/design_default_color_error" />
-
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+</FrameLayout>

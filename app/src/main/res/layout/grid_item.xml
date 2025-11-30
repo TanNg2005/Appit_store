@@ -4,60 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/surface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/surface">
+        android:orientation="vertical">
 
-        <!-- Hình ảnh sản phẩm -->
+        <!-- Hình ảnh sản phẩm (Nền trắng để ảnh đẹp nhất) -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_margin="8dp">
+            android:layout_height="170dp"
+            android:background="@android:color/white">
             
-            <com.google.android.material.card.MaterialCardView
+            <ImageView
+                android:id="@+id/gridImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
-                
-                <ImageView
-                    android:id="@+id/gridImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/shoe_placeholder" />
-                    
-            </com.google.android.material.card.MaterialCardView>
+                android:scaleType="centerCrop"
+                android:padding="12dp" 
+                android:src="@drawable/shoe_placeholder" />
             
             <!-- Discount Badge -->
             <TextView
                 android:id="@+id/badgeDiscount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#F44336"
+                android:background="@drawable/bg_discount_badge"
                 android:textColor="@android:color/white"
                 android:text="-34%"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:paddingHorizontal="6dp"
-                android:paddingVertical="2dp"
-                android:layout_gravity="top|end"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_gravity="top|start"
+                android:layout_margin="8dp"
                 android:visibility="gone"/>
                 
         </FrameLayout>
 
-        <!-- Phần thông tin -->
+        <!-- Phần thông tin: Sử dụng màu nền riêng biệt đã định nghĩa trong colors.xml -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="12dp"
-            android:paddingBottom="12dp">
+            android:background="@color/product_card_info_background" 
+            android:padding="12dp">
 
             <!-- Tên sản phẩm -->
             <TextView
@@ -66,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="40dp"
                 android:text="Tên Giày"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold"
                 android:maxLines="2"
@@ -78,19 +72,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical">
                 
+                <!-- SỬA: Sử dụng màu @color/price_text thay vì @color/accent -->
                 <TextView
                     android:id="@+id/gridPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="91.740đ"
                     android:textSize="16sp"
-                    android:textColor="#F44336"
+                    android:textColor="@color/price_text" 
                     android:textStyle="bold"
-                    android:layout_marginEnd="8dp"
-                    android:maxLines="1"/>
+                    android:layout_marginEnd="8dp"/>
                     
                 <TextView
                     android:id="@+id/gridOriginalPrice"
@@ -108,19 +102,16 @@
             
             <!-- Đánh giá và Đã bán -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="8dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:background="@drawable/bg_rating"
-                    android:paddingHorizontal="4dp"
-                    android:paddingVertical="1dp"
                     android:gravity="center_vertical">
                     
                     <ImageView
@@ -133,18 +124,18 @@
                         android:id="@+id/gridRatingText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
+                        android:layout_marginStart="4dp"
                         android:text="4.9"
-                        android:textColor="#FFC107"
+                        android:textColor="@color/text_primary"
                         android:textSize="12sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="12dp"
+                    android:layout_height="10dp"
                     android:background="@color/text_secondary"
-                    android:layout_marginHorizontal="6dp"/>
+                    android:layout_marginHorizontal="8dp"/>
 
                 <TextView
                     android:id="@+id/gridSoldText"

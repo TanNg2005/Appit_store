@@ -1,24 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- BASE COLORS (Giữ lại để tương thích) -->
     <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="purple_500">#2962FF</color>
+    <color name="purple_700">#0039CB</color>
+    <color name="teal_200">#00E5FF</color>
+    <color name="teal_700">#00B8D4</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    
-    <color name="app_background">#F5F5F5</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    
-    <color name="unread_notification_background">#E8EAF6</color>
 
-    <!-- SỬA LỖI: Thêm các màu còn thiếu -->
-    <color name="accent">#FF6200EE</color> 
-    <color name="dark_background">#121212</color>
-    <color name="dark_surface">#1E1E1E</color>
-    <color name="dark_text_primary">#FFFFFFFF</color>
-    <color name="dark_text_secondary">#B3FFFFFF</color> <!-- 70% white -->
+    <!-- ELECTRIC BLUE THEME PALETTE (LIGHT) -->
+    
+    <!-- Backgrounds -->
+    <color name="app_background">#F0F4F8</color> 
+    <color name="surface">#FFFFFF</color>      
+    <color name="product_card_info_background">#ECEFF1</color> 
+    
+    <!-- Text -->
+    <color name="text_primary">#102027</color>   
+    <color name="text_secondary">#546E7A</color> 
+    <color name="price_text">#FF6D00</color> <!-- SỬA: Màu cam đậm cho giá tiền -->
+    
+    <!-- Accents -->
+    <color name="accent">#2979FF</color>         
+    <color name="accent_dark">#1565C0</color>    
+    <color name="accent_light">#E3F2FD</color>   
+    
+    <!-- Functional -->
+    <color name="success">#00C853</color>
+    <color name="error">#D50000</color>
+    <color name="warning">#FFD600</color>
+    <color name="unread_notification_background">#E1F5FE</color> 
+
+    <!-- Mapping for Dark Mode names -->
+    <color name="dark_background">#0F172A</color> 
+    <color name="dark_surface">#1E293B</color>
+    <color name="dark_text_primary">#F8FAFC</color>
+    <color name="dark_text_secondary">#94A3B8</color>
 </resources>
