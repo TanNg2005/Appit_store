@@ -206,7 +206,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         adapter.notifyDataSetChanged();
         
         TextView textWelcome = findViewById(R.id.textWelcome);
-        if(textWelcome != null) textWelcome.setText("Sản phẩm yêu thích (> 4 sao)");
+        if(textWelcome != null) textWelcome.setText("Sản phẩm yêu thích");
     }
 
     private void filterBySale() {

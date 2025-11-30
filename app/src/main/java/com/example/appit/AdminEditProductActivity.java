@@ -13,7 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdminEditProductActivity extends AppCompatActivity {
 
-    private TextInputEditText title, description, price, stock, brand, category, thumbnail;
+    private TextInputEditText title, description, price, stock, brand, category, thumbnail, discount;
     private FirebaseFirestore db;
     private String productId;
     private Product currentProduct;
@@ -36,6 +36,7 @@ public class AdminEditProductActivity extends AppCompatActivity {
         brand = findViewById(R.id.edit_text_product_brand);
         category = findViewById(R.id.edit_text_product_category);
         thumbnail = findViewById(R.id.edit_text_product_thumbnail);
+        discount = findViewById(R.id.edit_text_product_discount); // Initialize discount field
         Button saveButton = findViewById(R.id.btn_save_product);
 
         productId = getIntent().getStringExtra("PRODUCT_ID");
@@ -61,6 +62,7 @@ public class AdminEditProductActivity extends AppCompatActivity {
                     brand.setText(currentProduct.getBrand());
                     category.setText(currentProduct.getCategory());
                     thumbnail.setText(currentProduct.getThumbnail());
+                    discount.setText(String.valueOf(currentProduct.getDiscountPercentage())); // Set discount value
                 }
             }
         });
@@ -70,10 +72,23 @@ public class AdminEditProductActivity extends AppCompatActivity {
         String titleStr = title.getText().toString().trim();
         String descStr = description.getText().toString().trim();
         String priceStr = price.getText().toString().trim();
-        int stockInt = Integer.parseInt(stock.getText().toString().trim());
+        int stockInt = 0;
+        try {
+             stockInt = Integer.parseInt(stock.getText().toString().trim());
+        } catch (NumberFormatException e) {
+             stockInt = 0;
+        }
+        
         String brandStr = brand.getText().toString().trim();
         String categoryStr = category.getText().toString().trim();
         String thumbStr = thumbnail.getText().toString().trim();
+        
+        double discountDouble = 0.0;
+        try {
+             discountDouble = Double.parseDouble(discount.getText().toString().trim());
+        } catch (NumberFormatException e) {
+             discountDouble = 0.0;
+        }
 
         DocumentReference productRef;
         if (productId != null) {
@@ -93,6 +108,7 @@ public class AdminEditProductActivity extends AppCompatActivity {
         currentProduct.setBrand(brandStr);
         currentProduct.setCategory(categoryStr);
         currentProduct.setThumbnail(thumbStr);
+        currentProduct.setDiscountPercentage(discountDouble); // Save discount value
 
         productRef.set(currentProduct)
                 .addOnSuccessListener(aVoid -> {

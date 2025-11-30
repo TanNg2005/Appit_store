@@ -49,6 +49,12 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-database")
     
+    // Google Play Services for Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Facebook Login SDK
+    implementation("com.facebook.android:facebook-login:16.2.0")
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

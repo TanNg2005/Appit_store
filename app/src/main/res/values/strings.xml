@@ -74,4 +74,7 @@
     <string name="address_btn_edit">Sửa</string>
     <string name="address_btn_delete">Xóa</string>
 
+    <!-- Google Sign In Config -->
+    <string name="default_web_client_id">521977987330-42odvjniuqq39e8r9h19imjh8loehuls.apps.googleusercontent.com</string> 
+
 </resources>
