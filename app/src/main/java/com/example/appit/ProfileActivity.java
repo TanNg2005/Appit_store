@@ -1,102 +1,70 @@
 package com.example.appit;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
     private static final String TAG = "ProfileActivity";
 
-    private EditText nameEditText, emailEditText, phoneEditText, addressEditText;
     private CircleImageView profileImageView;
+    private TextView userNameTextView, userEmailTextView;
     private DocumentReference userRef;
-    private StorageReference storageRef;
-    private User.ShippingAddress currentAddress; // Lưu địa chỉ hiện tại đang sửa
-
-    private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(
-            new ActivityResultContracts.GetContent(),
-            this::uploadProfileImage
-    );
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // SỬA LỖI: Thay thế Toolbar bằng nút Back tùy chỉnh
-        // Toolbar toolbar = findViewById(R.id.profile_toolbar);
-        // setSupportActionBar(toolbar);
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
         findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
-
-        nameEditText = findViewById(R.id.edit_text_name);
-        emailEditText = findViewById(R.id.edit_text_email);
-        phoneEditText = findViewById(R.id.edit_text_phone);
-        addressEditText = findViewById(R.id.edit_text_address);
+        
+        // Setup Views
         profileImageView = findViewById(R.id.profile_image);
-
-        Button saveButton = findViewById(R.id.btn_save_profile);
-        Button logoutButton = findViewById(R.id.btn_logout);
-        ImageButton editNameButton = findViewById(R.id.btn_edit_name);
-        ImageButton editPhoneButton = findViewById(R.id.btn_edit_phone);
-        ImageButton editAddressButton = findViewById(R.id.btn_edit_address);
-        ImageButton editImageButton = findViewById(R.id.btn_edit_profile_image);
+        userNameTextView = findViewById(R.id.text_user_name);
+        userEmailTextView = findViewById(R.id.text_user_email);
+        MaterialButton editProfileButton = findViewById(R.id.btn_edit_profile);
+        MaterialButton logoutButton = findViewById(R.id.btn_logout);
+        
+        // Menu items
+        findViewById(R.id.menu_my_orders).setOnClickListener(v -> startActivity(new Intent(this, OrderActivity.class)));
+        findViewById(R.id.menu_favorites).setOnClickListener(v -> startActivity(new Intent(this, WishlistActivity.class)));
+        findViewById(R.id.menu_address).setOnClickListener(v -> startActivity(new Intent(this, AddressBookActivity.class)));
+        
+        // Cài đặt: Chế độ tối & Ngôn ngữ đã bị loại bỏ theo yêu cầu
+        // Nếu muốn hiển thị lại, hãy khôi phục code trong layout và ở đây.
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             userRef = FirebaseFirestore.getInstance().collection("users").document(currentUser.getUid());
-            storageRef = FirebaseStorage.getInstance().getReference().child("profile_images").child(currentUser.getUid());
             loadUserProfile();
         } else {
             Toast.makeText(this, "Lỗi: Người dùng chưa đăng nhập!", Toast.LENGTH_LONG).show();
             finish();
         }
 
-        saveButton.setOnClickListener(v -> saveUserProfile());
+        editProfileButton.setOnClickListener(v -> startActivity(new Intent(this, EditProfileActivity.class)));
         logoutButton.setOnClickListener(v -> logoutUser());
-
-        editNameButton.setOnClickListener(v -> toggleEdit(nameEditText));
-        editPhoneButton.setOnClickListener(v -> toggleEdit(phoneEditText));
-        
-        // Thay đổi sự kiện click cho nút sửa địa chỉ -> Mở Sổ địa chỉ
-        editAddressButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, AddressBookActivity.class);
-            startActivity(intent);
-        });
-        
-        editImageButton.setOnClickListener(v -> mGetContent.launch("image/*"));
     }
 
     private void loadUserProfile() {
@@ -109,20 +77,8 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     User user = snapshot.toObject(User.class);
                     if (user != null) {
-                        nameEditText.setText(user.getDisplayName());
-                        emailEditText.setText(user.getEmail());
-                        phoneEditText.setText(user.getPhone());
-
-                        // Xử lý địa chỉ
-                        if (user.getShippingAddresses() != null && !user.getShippingAddresses().isEmpty()) {
-                            // Tìm địa chỉ mặc định, nếu không có thì lấy cái đầu tiên
-                            currentAddress = user.getShippingAddresses().stream()
-                                    .filter(User.ShippingAddress::isDefault).findFirst()
-                                    .orElse(user.getShippingAddresses().get(0));
-                        } else {
-                            currentAddress = null;
-                        }
-                        updateAddressDisplay();
+                        userNameTextView.setText(user.getDisplayName() != null && !user.getDisplayName().isEmpty() ? user.getDisplayName() : "Người dùng Appit");
+                        userEmailTextView.setText(user.getEmail());
 
                         if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
                             Glide.with(this).load(user.getProfileImageUrl()).placeholder(R.drawable.ic_profile).into(profileImageView);
@@ -136,48 +92,22 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void updateAddressDisplay() {
-        if (currentAddress != null && currentAddress.getStreet() != null) {
-            addressEditText.setText(String.format("%s, %s, %s", 
-                currentAddress.getStreet(), 
-                currentAddress.getDistrict(), 
-                currentAddress.getCity()));
-        } else {
-            addressEditText.setText("Chưa có địa chỉ mặc định");
-        }
+    
+    // Language dialog code removed since feature is disabled in UI
+    /*
+    private void showLanguageDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.language_change_title)
+            .setItems(R.array.languages_array, (dialog, which) -> {
+                String selectedLanguage = which == 1 ? "en" : "vi";
+                if (!selectedLanguage.equals(LocaleHelper.getLanguage(this))) {
+                     LocaleHelper.setLocale(this, selectedLanguage);
+                     recreate();
+                }
+            })
+            .show();
     }
-
-    private void saveUserProfile() {
-        String name = nameEditText.getText().toString().trim();
-        String phone = phoneEditText.getText().toString().trim();
-        
-        userRef.update(
-            "displayName", name,
-            "phone", phone
-        ).addOnSuccessListener(aVoid -> Toast.makeText(ProfileActivity.this, "Hồ sơ đã được cập nhật", Toast.LENGTH_SHORT).show())
-         .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
-
-    private void uploadProfileImage(Uri imageUri) {
-        if (imageUri != null) {
-            storageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String imageUrl = uri.toString();
-                    userRef.update("profileImageUrl", imageUrl);
-                }));
-        }
-    }
-
-    private void toggleEdit(EditText editText) {
-        editText.setEnabled(!editText.isEnabled());
-        if (editText.isEnabled()) {
-            editText.requestFocus();
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-            editText.setSelection(editText.getText().length());
-        }
-    }
+    */
 
     private void logoutUser() {
         CartManager.destroyInstance();

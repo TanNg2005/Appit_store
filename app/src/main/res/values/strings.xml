@@ -8,7 +8,7 @@
     <string name="nav_category">Danh mục</string>
     <string name="nav_cart">Giỏ hàng</string>
     <string name="nav_account">Tài khoản</string>
-    <string name="nav_address_book">Sổ địa chỉ</string> <!-- Mới -->
+    <string name="nav_address_book">Sổ địa chỉ</string>
     <string name="nav_favorite">Yêu thích</string>
     <string name="nav_filter">Lọc sản phẩm</string>
     <string name="admin_panel">Admin Panel</string>
@@ -33,6 +33,15 @@
     <string name="profile_phone">Số điện thoại</string>
     <string name="profile_address">Địa chỉ nhận hàng</string>
     <string name="profile_save_changes">Lưu thay đổi</string>
+    <string name="profile_info">Thông tin cá nhân</string>
+    <string name="profile_edit_btn">CHỈNH SỬA HỒ SƠ</string>
+    <string name="profile_orders">Đơn hàng của tôi</string>
+
+    <!-- Cart Screen -->
+    <string name="cart_title">Giỏ hàng</string> <!-- New -->
+    <string name="cart_total">Tổng cộng:</string> <!-- New -->
+    <string name="cart_checkout_btn">Tiến hành thanh toán</string> <!-- New -->
+    <string name="cart_empty">Giỏ hàng trống</string> <!-- New -->
 
     <!-- Filter Screen -->
     <string name="filter_by_brand">Lọc theo hãng</string>
@@ -40,6 +49,8 @@
     <string name="filter_by_rating">Đánh giá tối thiểu</string>
     <string name="filter_apply">Áp dụng</string>
     <string name="filter_clear">Xóa bộ lọc</string>
+    <string name="filter_found_results">Tìm thấy %d kết quả</string>
+    <string name="filter_all">Tất cả</string>
 
     <!-- Language Change Dialog -->
     <string name="language_change_title">Thay đổi ngôn ngữ</string>
@@ -49,6 +60,12 @@
 
     <!-- Main Screen -->
     <string name="featured_products">Sản phẩm nổi bật</string>
+    <string name="favorite_products">Sản phẩm yêu thích</string>
+    <string name="discount_products">Đang giảm giá</string>
+    <string name="new_products">Sản phẩm mới</string>
+    <string name="filter_cleared">Đã xóa bộ lọc</string>
+    <string name="showing_category">Đang hiển thị: %s</string>
+    <string name="welcome_login">Vui lòng đăng nhập</string>
     
     <!-- Address Book -->
     <string name="address_book_title">Sổ địa chỉ</string>
@@ -56,6 +73,7 @@
     <string name="address_book_empty">Chưa có địa chỉ nào. Hãy thêm địa chỉ mới!</string>
     <string name="address_add_new">Thêm địa chỉ mới</string>
     <string name="address_edit">Sửa địa chỉ</string>
+    <string name="address_edit_title">Chỉnh sửa địa chỉ</string>
     <string name="address_recipient_info">Thông tin người nhận</string>
     <string name="address_hint_name">Họ và tên</string>
     <string name="address_hint_phone">Số điện thoại</string>
@@ -73,8 +91,41 @@
     <string name="address_btn_set_default">Đặt làm mặc định</string>
     <string name="address_btn_edit">Sửa</string>
     <string name="address_btn_delete">Xóa</string>
+    <string name="address_saved">Đã lưu địa chỉ</string>
+    <string name="address_deleted">Đã xóa địa chỉ</string>
+
+    <!-- Admin Product Edit -->
+    <string name="admin_hint_product_name">Tên sản phẩm</string>
+    <string name="admin_hint_price">Giá</string>
+    <string name="admin_hint_description">Mô tả</string>
+    <string name="admin_hint_quantity">Số lượng</string>
+    <string name="admin_hint_brand">Thương hiệu</string>
+    <string name="admin_hint_category">Danh mục</string>
+    <string name="admin_btn_add_image">Thêm hình ảnh</string>
+    <string name="admin_btn_save_product">Lưu sản phẩm</string>
+
+    <!-- Reviews -->
+    <string name="review_write_btn">Viết đánh giá</string>
+    <string name="review_send_btn">Gửi đánh giá</string>
+    <string name="review_hint_input">Nhập đánh giá của bạn</string>
+    <string name="review_success">Đã gửi đánh giá</string>
+    <string name="review_error">Lỗi khi gửi đánh giá</string>
+
+    <!-- Order Status -->
+    <string name="status_pending">Chờ xác nhận</string>
+    <string name="status_paid">Đã thanh toán</string>
+    <string name="status_shipping">Đang giao hàng</string>
+    <string name="status_completed">Hoàn thành</string>
+    <string name="status_cancelled">Đã hủy</string>
+    <string name="status_cancel_req">Yêu cầu hủy</string>
 
     <!-- Google Sign In Config -->
     <string name="default_web_client_id">521977987330-42odvjniuqq39e8r9h19imjh8loehuls.apps.googleusercontent.com</string> 
+
+    <!-- Errors & Common -->
+    <string name="error_login_required">Lỗi: Người dùng chưa đăng nhập!</string>
+    <string name="error_load_profile">Lỗi khi đọc dữ liệu hồ sơ</string>
+    <string name="user_appit">Người dùng Appit</string>
+    <string name="currency_unit">đ</string>
 
 </resources>

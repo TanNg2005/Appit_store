@@ -96,7 +96,7 @@ public class FilterActivity extends BaseActivity {
         chipGroup.removeAllViews();
 
         // 1. Tạo và thêm nút "Tất cả"
-        Chip allChip = createChoiceChip("Tất cả", chipGroup);
+        Chip allChip = createChoiceChip("All", chipGroup);
         allChip.setId(View.generateViewId());
         chipGroup.addView(allChip);
 
@@ -160,7 +160,7 @@ public class FilterActivity extends BaseActivity {
 
         adapter = new GridAdapter(this, filteredList);
         recyclerView.setAdapter(adapter);
-        resultsCountTextView.setText(String.format("Tìm thấy %d kết quả", filteredList.size()));
+        resultsCountTextView.setText(String.format(getString(R.string.filter_found_results), filteredList.size()));
     }
 
     private void clearFilters() {

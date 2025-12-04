@@ -33,6 +33,7 @@
         <activity android:name=".ProductDetailActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".CartActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".ProfileActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".EditProfileActivity" android:exported="false" android:parentActivityName=".ProfileActivity" />
         <activity android:name=".AddressBookActivity" android:exported="false" android:parentActivityName=".ProfileActivity" />
         <activity android:name=".OrderActivity" android:exported="false" android:parentActivityName=".CartActivity" />
         <activity android:name=".FilterActivity" android:exported="false" android:parentActivityName=".MainActivity" />

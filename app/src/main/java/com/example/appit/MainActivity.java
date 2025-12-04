@@ -36,7 +36,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -575,10 +574,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(new Intent(this, CartActivity.class));
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
-        } else if (id == R.id.nav_address_book) {
-            startActivity(new Intent(this, AddressBookActivity.class));
-        } else if (id == R.id.nav_favorite) {
-            startActivity(new Intent(this, WishlistActivity.class));
         } else if (id == R.id.nav_filter_advanced) {
             startActivity(new Intent(this, FilterActivity.class));
         } else if (id == R.id.nav_admin_orders) {

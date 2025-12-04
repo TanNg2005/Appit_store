@@ -5,7 +5,7 @@
 
     <!-- Navigation Drawer -->
     <string name="nav_home">Home</string>
-    <string name="nav_category">Categories</string> <!-- Mới -->
+    <string name="nav_category">Categories</string>
     <string name="nav_cart">Cart</string>
     <string name="nav_account">Account</string>
     <string name="nav_address_book">Address Book</string>
@@ -33,6 +33,9 @@
     <string name="profile_phone">Phone</string>
     <string name="profile_address">Shipping Address</string>
     <string name="profile_save_changes">Save Changes</string>
+    <string name="profile_info">Personal Info</string> <!-- New -->
+    <string name="profile_edit_btn">EDIT PROFILE</string> <!-- New -->
+    <string name="profile_orders">My Orders</string> <!-- New -->
 
     <!-- Filter Screen -->
     <string name="filter_by_brand">Filter by brand</string>
@@ -40,6 +43,8 @@
     <string name="filter_by_rating">Minimum rating</string>
     <string name="filter_apply">Apply</string>
     <string name="filter_clear">Clear filters</string>
+    <string name="filter_found_results">Found %d results</string> <!-- New -->
+    <string name="filter_all">All</string> <!-- New -->
 
     <!-- Language Change Dialog -->
     <string name="language_change_title">Change Language</string>
@@ -49,6 +54,12 @@
 
     <!-- Main Screen -->
     <string name="featured_products">Featured Products</string>
+    <string name="favorite_products">Wishlist</string> <!-- New -->
+    <string name="discount_products">Discounted</string> <!-- New -->
+    <string name="new_products">Newest</string> <!-- New -->
+    <string name="filter_cleared">Filters cleared</string> <!-- New -->
+    <string name="showing_category">Showing: %s</string> <!-- New -->
+    <string name="welcome_login">Please Login</string> <!-- New -->
 
     <!-- Address Book -->
     <string name="address_book_title">Address Book</string>
@@ -56,6 +67,7 @@
     <string name="address_book_empty">No address found. Add a new one!</string>
     <string name="address_add_new">Add New Address</string>
     <string name="address_edit">Edit Address</string>
+    <string name="address_edit_title">Edit Address</string> <!-- New -->
     <string name="address_recipient_info">Recipient Info</string>
     <string name="address_hint_name">Full Name</string>
     <string name="address_hint_phone">Phone Number</string>
@@ -73,5 +85,41 @@
     <string name="address_btn_set_default">Set Default</string>
     <string name="address_btn_edit">Edit</string>
     <string name="address_btn_delete">Delete</string>
+    <string name="address_saved">Address saved</string> <!-- New -->
+    <string name="address_deleted">Address deleted</string> <!-- New -->
+
+    <!-- Admin Product Edit -->
+    <string name="admin_hint_product_name">Product Name</string> <!-- New -->
+    <string name="admin_hint_price">Price</string> <!-- New -->
+    <string name="admin_hint_description">Description</string> <!-- New -->
+    <string name="admin_hint_quantity">Quantity</string> <!-- New -->
+    <string name="admin_hint_brand">Brand</string> <!-- New -->
+    <string name="admin_hint_category">Category</string> <!-- New -->
+    <string name="admin_btn_add_image">Add Image</string> <!-- New -->
+    <string name="admin_btn_save_product">Save Product</string> <!-- New -->
+
+    <!-- Reviews -->
+    <string name="review_write_btn">Write Review</string> <!-- New -->
+    <string name="review_send_btn">Submit Review</string> <!-- New -->
+    <string name="review_hint_input">Enter your review</string> <!-- New -->
+    <string name="review_success">Review submitted</string> <!-- New -->
+    <string name="review_error">Error submitting review</string> <!-- New -->
+
+    <!-- Order Status -->
+    <string name="status_pending">Pending</string> <!-- New -->
+    <string name="status_paid">Paid</string> <!-- New -->
+    <string name="status_shipping">Shipping</string> <!-- New -->
+    <string name="status_completed">Completed</string> <!-- New -->
+    <string name="status_cancelled">Cancelled</string> <!-- New -->
+    <string name="status_cancel_req">Cancel Request</string> <!-- New -->
+
+    <!-- Google Sign In Config -->
+    <string name="default_web_client_id">521977987330-42odvjniuqq39e8r9h19imjh8loehuls.apps.googleusercontent.com</string> 
+
+    <!-- Errors & Common -->
+    <string name="error_login_required">Error: User not logged in!</string>
+    <string name="error_load_profile">Error loading profile data</string>
+    <string name="user_appit">Appit User</string>
+    <string name="currency_unit">₫</string>
 
 </resources>

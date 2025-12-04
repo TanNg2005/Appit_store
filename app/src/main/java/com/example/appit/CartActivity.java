@@ -35,29 +35,15 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
 
         cartManager = CartManager.getInstance();
-
-        // SỬA LỖI: Thay thế Toolbar cũ bằng nút Back tùy chỉnh
-        // Toolbar toolbar = findViewById(R.id.cart_toolbar);
-        // setSupportActionBar(toolbar);
-        // getSupportActionBar().setTitle("Giỏ hàng");
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
 
         recyclerView = findViewById(R.id.cart_recycler_view);
         totalPriceTextView = findViewById(R.id.cart_total_price);
         Button btnProceedToPayment = findViewById(R.id.btn_proceed_to_payment);
-        Button btnViewOrders = findViewById(R.id.btn_view_orders); // Nút xem đơn hàng đã đặt
 
         setupRecyclerView();
         loadCartItems();
-
-        // Nút Xem đơn hàng đã đặt
-        if (btnViewOrders != null) {
-            btnViewOrders.setOnClickListener(v -> {
-                startActivity(new Intent(CartActivity.this, OrderActivity.class));
-            });
-        }
 
         btnProceedToPayment.setOnClickListener(v -> {
             List<CartItem> selectedItems = cartManager.getSelectedItems();
