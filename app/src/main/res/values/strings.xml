@@ -14,6 +14,7 @@
     <string name="admin_panel">Admin Panel</string>
     <string name="nav_manage_orders">Quản lý đơn hàng</string>
     <string name="nav_manage_products">Quản lý sản phẩm</string>
+    <string name="nav_manage_revenue">Quản lý doanh thu</string>
     <string name="system">Hệ thống</string>
     <string name="nav_settings">Cài đặt</string>
     <string name="nav_logout">Đăng xuất</string>

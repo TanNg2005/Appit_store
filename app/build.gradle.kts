@@ -19,6 +19,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // SỬA LỖI: Bật tính năng BuildConfig
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -49,12 +54,13 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-database")
     
-    // Google Play Services for Google Sign-In
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    // Facebook Login SDK
-    implementation("com.facebook.android:facebook-login:16.2.0")
+    // App Check dependencies
+    implementation("com.google.firebase:firebase-appcheck-debug")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
     
+    // Google Sign In SDK (Cần thiết cho LoginActivity và RegisterActivity)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -72,7 +78,10 @@ dependencies {
     // Circle Image View for Profile
     implementation("de.hdodenhof:circleimageview:3.1.0")
     
-    // Circle Indicator for Banner
+    // MPAndroidChart for charts
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // Circle Indicator for Banner (ViewPager2)
     implementation("me.relex:circleindicator:2.1.6")
 
 }

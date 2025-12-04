@@ -580,6 +580,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(new Intent(this, AdminOrdersActivity.class));
         } else if (id == R.id.nav_admin_products) {
             startActivity(new Intent(this, AdminProductsActivity.class));
+        } else if (id == R.id.nav_admin_revenue) { // Added new case
+            startActivity(new Intent(this, RevenueActivity.class));
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_logout) {
