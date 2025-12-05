@@ -36,6 +36,9 @@
         <item name="colorControlHighlight">@color/accent_light</item>
     </style>
     
+    <style name="Theme.Appit.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Appit.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    
     <!-- Style riêng cho Button để bo tròn và đậm chất Tech -->
     <style name="Widget.Appit.Button" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/accent</item>

@@ -114,23 +114,6 @@
                 app:strokeWidth="1dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_nav_voucher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Voucher"
-                android:textSize="13sp"
-                android:layout_marginEnd="12dp"
-                app:cornerRadius="20dp"
-                android:paddingVertical="10dp"
-                android:minHeight="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:textColor="@color/text_secondary"
-                app:strokeColor="@color/text_secondary"
-                app:strokeWidth="1dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
         </LinearLayout>
     </HorizontalScrollView>
 

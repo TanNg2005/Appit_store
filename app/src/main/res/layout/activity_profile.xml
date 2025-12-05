@@ -130,6 +130,34 @@
                 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE"/>
 
+                <!-- Saved Vouchers -->
+                <LinearLayout
+                    android:id="@+id/menu_saved_vouchers"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_voucher"
+                        app:tint="@color/text_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Voucher đã lưu"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginStart="16dp"/>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#EEEEEE"/>
+
                 <!-- Favorites -->
                 <LinearLayout
                     android:id="@+id/menu_favorites"

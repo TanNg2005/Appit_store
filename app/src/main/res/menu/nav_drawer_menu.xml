@@ -10,6 +10,11 @@
             android:id="@+id/nav_category"
             android:icon="@android:drawable/ic_menu_sort_by_size"
             android:title="@string/nav_category" />
+        <!-- Thêm mục Kho Voucher -->
+        <item
+            android:id="@+id/nav_voucher"
+            android:icon="@drawable/ic_voucher" 
+            android:title="Kho Voucher" />
         <item
             android:id="@+id/nav_cart"
             android:icon="@drawable/ic_cart"
@@ -39,6 +44,15 @@
                     android:id="@+id/nav_admin_revenue"
                     android:icon="@drawable/ic_chart_bar"
                     android:title="@string/nav_manage_revenue" />
+                <!-- Thêm quản lý User và Voucher -->
+                <item
+                    android:id="@+id/nav_admin_users"
+                    android:icon="@drawable/ic_profile" 
+                    android:title="Quản lý người dùng" />
+                 <item
+                    android:id="@+id/nav_admin_vouchers"
+                    android:icon="@drawable/ic_voucher"
+                    android:title="Quản lý Voucher" />
             </menu>
         </item>
     </group>

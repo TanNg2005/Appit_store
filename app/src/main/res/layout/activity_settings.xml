@@ -90,6 +90,54 @@
                             android:background="@color/text_secondary"
                             android:alpha="0.1"
                             android:layout_marginVertical="16dp"/>
+                            
+                        <!-- Account Settings -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tài khoản"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/btn_change_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="12dp"
+                            android:background="?attr/selectableItemBackground">
+                            
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@android:drawable/ic_lock_idle_lock"
+                                app:tint="@color/text_secondary"/>
+                                
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="16dp"
+                                android:text="Đổi mật khẩu"
+                                android:textSize="16sp"
+                                android:textColor="@color/text_secondary"/>
+                                
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_arrow_right"
+                                app:tint="@color/text_secondary"/>
+                        </LinearLayout>
+                        
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/text_secondary"
+                            android:alpha="0.1"
+                            android:layout_marginVertical="16dp"/>
 
                         <!-- Push Notification Settings -->
                         <TextView
@@ -129,7 +177,6 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- 2. Toolbar / Navigation (FIXED ON TOP) -->
-    <!-- Đặt ở cuối cùng của FrameLayout cha để nó nằm đè lên trên ScrollView -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

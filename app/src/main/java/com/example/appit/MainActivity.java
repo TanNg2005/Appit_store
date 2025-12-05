@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Runnable bannerRunnable;
 
     // Nav Filter Buttons
-    private MaterialButton btnNavFeatured, btnNavSale, btnNavNew, btnNavVoucher, btnNavFavorite;
+    private MaterialButton btnNavFeatured, btnNavSale, btnNavNew, btnNavFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +128,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         btnNavFeatured = findViewById(R.id.btn_nav_featured);
         btnNavSale = findViewById(R.id.btn_nav_sale);
         btnNavNew = findViewById(R.id.btn_nav_new);
-        btnNavVoucher = findViewById(R.id.btn_nav_voucher);
         btnNavFavorite = findViewById(R.id.btn_nav_favorite);
 
         View.OnClickListener navClickListener = v -> {
@@ -142,8 +141,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 filterBySale();
             } else if (id == R.id.btn_nav_new) {
                 filterByNew();
-            } else if (id == R.id.btn_nav_voucher) {
-                Toast.makeText(this, "Voucher functionality coming soon!", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.btn_nav_favorite) {
                 filterByHighRating();
             }
@@ -152,7 +149,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (btnNavFeatured != null) btnNavFeatured.setOnClickListener(navClickListener);
         if (btnNavSale != null) btnNavSale.setOnClickListener(navClickListener);
         if (btnNavNew != null) btnNavNew.setOnClickListener(navClickListener);
-        if (btnNavVoucher != null) btnNavVoucher.setOnClickListener(navClickListener);
         if (btnNavFavorite != null) btnNavFavorite.setOnClickListener(navClickListener);
         
         // Set initial state
@@ -160,7 +156,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void updateNavButtonState(MaterialButton selectedButton) {
-        MaterialButton[] buttons = {btnNavFeatured, btnNavSale, btnNavNew, btnNavVoucher, btnNavFavorite};
+        MaterialButton[] buttons = {btnNavFeatured, btnNavSale, btnNavNew, btnNavFavorite};
         
         // Using ContextCompat logic for colors to avoid deprecated method warnings
         int colorPrimary = androidx.core.content.ContextCompat.getColor(this, R.color.purple_500);
@@ -586,6 +582,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_logout) {
             logoutUser();
+        } else if (id == R.id.nav_voucher) { // Thêm xử lý cho nav_voucher mới
+            startActivity(new Intent(this, VoucherListActivity.class));
+        } else if (id == R.id.nav_admin_users) {
+            startActivity(new Intent(this, AdminUsersActivity.class));
+        } else if (id == R.id.nav_admin_vouchers) {
+            startActivity(new Intent(this, AdminVoucherActivity.class));
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

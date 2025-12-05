@@ -38,16 +38,27 @@
         <activity android:name=".OrderActivity" android:exported="false" android:parentActivityName=".CartActivity" />
         <activity android:name=".FilterActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".NotificationActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        
         <activity android:name=".AdminOrdersActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".AdminProductsActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".AdminEditProductActivity" android:exported="false" android:parentActivityName=".AdminProductsActivity" />
         
+        <!-- SỬA LỖI: Thêm khai báo AdminUsersActivity -->
+        <activity android:name=".AdminUsersActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        
+        <!-- SỬA LỖI: Thêm khai báo AdminVoucherActivity -->
+        <activity android:name=".AdminVoucherActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+
         <!-- SỬA LỖI: Thêm khai báo RevenueActivity -->
         <activity android:name=".RevenueActivity" android:exported="false" android:parentActivityName=".MainActivity" />
 
         <activity android:name=".SettingsActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".WishlistActivity" android:exported="false" android:parentActivityName=".MainActivity" />
         <activity android:name=".CategoryActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        <activity android:name=".VoucherListActivity" android:exported="false" android:parentActivityName=".MainActivity" />
+        
+        <!-- Added AdminEditVoucherActivity -->
+        <activity android:name=".AdminEditVoucherActivity" android:exported="false" android:parentActivityName=".AdminVoucherActivity" />
 
         <!-- Payment Flow Activities -->
         <activity

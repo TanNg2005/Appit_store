@@ -15,6 +15,7 @@ public class User {
     private Map<String, Long> cart;
     private List<String> favorites;
     private boolean isAdmin;
+    private boolean isLocked;
 
     public User() {}
 
@@ -48,6 +49,12 @@ public class User {
 
     @PropertyName("isAdmin")
     public void setAdmin(boolean admin) { isAdmin = admin; }
+
+    @PropertyName("isLocked")
+    public boolean isLocked() { return isLocked; }
+
+    @PropertyName("isLocked")
+    public void setLocked(boolean locked) { isLocked = locked; }
 
     public static class ShippingAddress {
         private String recipientName;

@@ -51,6 +51,13 @@ public class ProfileActivity extends BaseActivity {
         findViewById(R.id.menu_favorites).setOnClickListener(v -> startActivity(new Intent(this, WishlistActivity.class)));
         findViewById(R.id.menu_address).setOnClickListener(v -> startActivity(new Intent(this, AddressBookActivity.class)));
         
+        // Add click listener for Saved Vouchers
+        findViewById(R.id.menu_saved_vouchers).setOnClickListener(v -> {
+            Intent intent = new Intent(this, VoucherListActivity.class);
+            intent.putExtra("SHOW_SAVED_ONLY", true);
+            startActivity(intent);
+        });
+        
         // Cài đặt: Chế độ tối & Ngôn ngữ đã bị loại bỏ theo yêu cầu
         // Nếu muốn hiển thị lại, hãy khôi phục code trong layout và ở đây.
 
@@ -93,22 +100,6 @@ public class ProfileActivity extends BaseActivity {
         });
     }
     
-    // Language dialog code removed since feature is disabled in UI
-    /*
-    private void showLanguageDialog() {
-        new AlertDialog.Builder(this)
-            .setTitle(R.string.language_change_title)
-            .setItems(R.array.languages_array, (dialog, which) -> {
-                String selectedLanguage = which == 1 ? "en" : "vi";
-                if (!selectedLanguage.equals(LocaleHelper.getLanguage(this))) {
-                     LocaleHelper.setLocale(this, selectedLanguage);
-                     recreate();
-                }
-            })
-            .show();
-    }
-    */
-
     private void logoutUser() {
         CartManager.destroyInstance();
         FirebaseAuth.getInstance().signOut();

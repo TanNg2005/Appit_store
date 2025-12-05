@@ -2,7 +2,9 @@ package com.example.appit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,9 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -26,8 +32,14 @@ public class CartActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CartAdapter adapter;
     private TextView totalPriceTextView;
+    private TextView discountPriceTextView;
+    private TextInputEditText voucherEditText;
     private CartManager cartManager;
     private List<CartItem> cartItems = new ArrayList<>();
+    private FirebaseFirestore db;
+    
+    private Voucher appliedVoucher = null;
+    private double currentDiscountAmount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +47,21 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
 
         cartManager = CartManager.getInstance();
+        db = FirebaseFirestore.getInstance();
         
         findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
 
         recyclerView = findViewById(R.id.cart_recycler_view);
         totalPriceTextView = findViewById(R.id.cart_total_price);
+        discountPriceTextView = findViewById(R.id.cart_discount_price);
+        voucherEditText = findViewById(R.id.voucher_edit_text);
+        MaterialButton btnApplyVoucher = findViewById(R.id.btn_apply_voucher);
         Button btnProceedToPayment = findViewById(R.id.btn_proceed_to_payment);
 
         setupRecyclerView();
         loadCartItems();
+
+        btnApplyVoucher.setOnClickListener(v -> applyVoucher());
 
         btnProceedToPayment.setOnClickListener(v -> {
             List<CartItem> selectedItems = cartManager.getSelectedItems();
@@ -69,6 +87,57 @@ public class CartActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             updateTotalPrice();
         });
+    }
+    
+    private void applyVoucher() {
+        String voucherCode = voucherEditText.getText().toString().trim();
+        if (voucherCode.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập mã voucher", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập để sử dụng voucher", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Reset current voucher
+        appliedVoucher = null;
+        currentDiscountAmount = 0;
+        updateTotalPrice();
+
+        db.collection("vouchers")
+                .whereEqualTo("code", voucherCode)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Lấy voucher đầu tiên tìm thấy (mã phải là duy nhất)
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Voucher voucher = document.toObject(Voucher.class);
+                            
+                            // Tính tổng tiền các món ĐƯỢC CHỌN để kiểm tra điều kiện
+                            double selectedTotal = cartManager.calculateTotalPrice();
+                            
+                            // CHECK VALIDATION with UserId
+                            String validationMsg = voucher.getValidationMessage(selectedTotal, user.getUid());
+                            
+                            if ("VALID".equals(validationMsg)) {
+                                appliedVoucher = voucher;
+                                Toast.makeText(this, "Áp dụng mã giảm giá thành công!", Toast.LENGTH_SHORT).show();
+                                updateTotalPrice();
+                            } else {
+                                Toast.makeText(this, validationMsg, Toast.LENGTH_SHORT).show();
+                            }
+                            return; // Chỉ xử lý 1 voucher
+                        }
+                    } else {
+                        Toast.makeText(this, "Mã voucher không tồn tại", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi khi kiểm tra voucher: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void checkUserInfoAndCreateOrder(List<CartItem> selectedItems) {
@@ -124,13 +193,29 @@ public class CartActivity extends AppCompatActivity {
         if(currentUser == null) return;
 
         String orderId = UUID.randomUUID().toString();
-        double totalAmount = cartManager.calculateTotalPrice();
+        
+        // Tổng tiền hàng (chưa trừ giảm giá)
+        double subTotal = cartManager.calculateTotalPrice();
+        // Tính toán lại giảm giá (để đảm bảo chính xác lúc đặt hàng)
+        double discount = 0;
+        if (appliedVoucher != null) {
+             discount = appliedVoucher.calculateDiscount(subTotal);
+             
+             // CẬP NHẬT VOUCHER: Tăng usedCount và thêm userId vào usedBy
+             incrementVoucherUsage(appliedVoucher.getCode(), currentUser.getUid());
+        }
+        
+        double tempTotal = subTotal - discount;
+        double finalTotal = tempTotal < 0 ? 0 : tempTotal;
 
         Order order = new Order();
         order.setUserId(currentUser.getUid());
-        order.setCustomerName(user.getDisplayName()); // Lấy tên từ user đã load
-        order.setTotalPrice(totalAmount);
+        order.setCustomerName(user.getDisplayName()); 
+        order.setTotalPrice(finalTotal); // Lưu tổng tiền SAU KHI giảm
         order.setStatus("Chờ xác nhận");
+        // Lưu thông tin voucher vào đơn hàng (nếu cần thiết kế thêm trường này trong Order model)
+        // order.setVoucherCode(appliedVoucher != null ? appliedVoucher.getCode() : null);
+        // order.setDiscountAmount(discount);
 
         List<Order.OrderItem> orderItems = new ArrayList<>();
         for(CartItem item : selectedItems){
@@ -149,15 +234,60 @@ public class CartActivity extends AppCompatActivity {
                 // Gọi phương thức xóa sản phẩm đã mua
                 cartManager.clearPurchasedItems(selectedItems);
                 Intent intent = new Intent(this, QrPaymentActivity.class);
-                intent.putExtra("TOTAL_AMOUNT", totalAmount);
+                intent.putExtra("TOTAL_AMOUNT", finalTotal);
                 intent.putExtra("ORDER_ID", orderId);
                 startActivity(intent);
             });
     }
+    
+    private void incrementVoucherUsage(String voucherCode, String userId) {
+        // Tìm document ID của voucher để update
+        db.collection("vouchers").whereEqualTo("code", voucherCode).get()
+            .addOnSuccessListener(snapshots -> {
+                for(QueryDocumentSnapshot doc : snapshots) {
+                     // Cập nhật atomic: tăng biến đếm và thêm phần tử vào mảng
+                     db.collection("vouchers").document(doc.getId())
+                       .update(
+                           "usedCount", FieldValue.increment(1),
+                           "usedBy", FieldValue.arrayUnion(userId)
+                       );
+                }
+            });
+    }
 
     public void updateTotalPrice() {
-        double totalPrice = cartManager.calculateTotalPrice();
+        double subTotal = cartManager.calculateTotalPrice();
+        
+        // Re-validate voucher logic when cart changes (e.g. item removed or quantity changed)
+        if (appliedVoucher != null) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String userId = user != null ? user.getUid() : null;
+            
+            String validation = appliedVoucher.getValidationMessage(subTotal, userId);
+            if (!"VALID".equals(validation)) {
+                appliedVoucher = null;
+                currentDiscountAmount = 0;
+                Toast.makeText(this, "Voucher không còn đủ điều kiện: " + validation, Toast.LENGTH_SHORT).show();
+            } else {
+                currentDiscountAmount = appliedVoucher.calculateDiscount(subTotal);
+            }
+        } else {
+            currentDiscountAmount = 0;
+        }
+
+        double finalTotal = subTotal - currentDiscountAmount;
+        if (finalTotal < 0) finalTotal = 0;
+        
         NumberFormat format = NumberFormat.getInstance(new Locale("vi", "VN"));
-        totalPriceTextView.setText(format.format(totalPrice) + " VND");
+        
+        totalPriceTextView.setText(format.format(finalTotal) + " " + getString(R.string.currency_unit));
+        
+        if (currentDiscountAmount > 0) {
+            discountPriceTextView.setText("-" + format.format(currentDiscountAmount) + " " + getString(R.string.currency_unit));
+            discountPriceTextView.setVisibility(View.VISIBLE);
+        } else {
+            discountPriceTextView.setText("-0" + getString(R.string.currency_unit));
+            // discountPriceTextView.setVisibility(View.GONE); // Hoặc ẩn đi nếu muốn
+        }
     }
 }

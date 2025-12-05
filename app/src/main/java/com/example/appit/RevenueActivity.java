@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -76,7 +77,14 @@ public class RevenueActivity extends AppCompatActivity {
                 for (DocumentSnapshot doc : productSnapshots) {
                     String category = doc.getString("category");
                     if (category != null) {
+                        // 1. Map theo Document ID (ID của Firebase)
                         productIdToCategoryMap.put(doc.getId(), category);
+                        
+                        // 2. Map theo field "id" bên trong document (nếu có)
+                        Object internalId = doc.get("id");
+                        if (internalId != null) {
+                            productIdToCategoryMap.put(String.valueOf(internalId), category);
+                        }
                     }
                 }
                 // Step 2: After loading products, load orders
@@ -110,16 +118,26 @@ public class RevenueActivity extends AppCompatActivity {
         for (QueryDocumentSnapshot doc : snapshots) {
             try {
                 Order order = doc.toObject(Order.class);
-                
-                // Chỉ tính các đơn hàng đã hoàn thành hoặc đã thanh toán
-                if (order.getStatus() == null || 
-                   (!order.getStatus().equalsIgnoreCase("Completed") && 
-                    !order.getStatus().equalsIgnoreCase("Paid") && 
-                    !order.getStatus().equalsIgnoreCase("Delivered"))) {
+                String status = order.getStatus();
+
+                // Chỉ tính các đơn hàng có trạng thái hợp lệ
+                if (status == null || 
+                   (!status.equalsIgnoreCase("Đã thanh toán") && 
+                    !status.equalsIgnoreCase("Đã nhận hàng") && 
+                    !status.equalsIgnoreCase("Đang giao hàng"))) {
                     continue;
                 }
 
                 double orderTotal = order.getTotalPrice();
+                
+                // Nếu totalPrice = 0, thử tính lại từ items
+                if (orderTotal == 0 && order.getItems() != null) {
+                    for (Order.OrderItem item : order.getItems()) {
+                        double itemPrice = parsePrice(item.getProductPrice());
+                        orderTotal += itemPrice * item.getQuantity();
+                    }
+                }
+
                 totalRevenue += orderTotal;
 
                 // Tính doanh thu theo tháng
@@ -139,7 +157,6 @@ public class RevenueActivity extends AppCompatActivity {
                         }
                         
                         // Tính giá trị của từng item
-                        // Vì productPrice lưu dưới dạng chuỗi có thể chứa ký tự tiền tệ, cần parse cẩn thận
                         double itemPrice = parsePrice(item.getProductPrice());
                         double itemTotal = itemPrice * item.getQuantity();
                         
@@ -159,10 +176,6 @@ public class RevenueActivity extends AppCompatActivity {
     private double parsePrice(String priceStr) {
         if (priceStr == null || priceStr.isEmpty()) return 0;
         try {
-            // Loại bỏ tất cả ký tự không phải số (giữ lại dấu .)
-            // Nếu format là 10.000.000 thì replaceAll sẽ thành 10000000 -> OK
-            // Nếu format là 10,000,000 thì replaceAll sẽ thành 10000000 -> OK
-            // Nếu format là 10.5 (USD) thì cẩn thận, nhưng ở VN thường dùng số nguyên
             String cleanStr = priceStr.replaceAll("[^\\d]", "");
             if (cleanStr.isEmpty()) return 0;
             return Double.parseDouble(cleanStr);
@@ -189,8 +202,6 @@ public class RevenueActivity extends AppCompatActivity {
         List<String> labels = new ArrayList<>();
         
         List<String> sortedMonths = new ArrayList<>(monthlyRevenueMap.keySet());
-        // Sắp xếp tháng tăng dần. Định dạng MM/yyyy có thể sort theo string tạm chấp nhận được nếu cùng năm
-        // Để chính xác hơn nên sort theo Date, nhưng ở đây đơn giản hóa
         Collections.sort(sortedMonths);
 
         int index = 0;
@@ -223,7 +234,6 @@ public class RevenueActivity extends AppCompatActivity {
     private void setupPieChart() {
         List<PieEntry> entries = new ArrayList<>();
         for (Map.Entry<String, Double> entry : categoryRevenueMap.entrySet()) {
-            // Chỉ hiển thị danh mục có doanh thu > 0
             if (entry.getValue() > 0) {
                 entries.add(new PieEntry(entry.getValue().floatValue(), entry.getKey()));
             }
@@ -232,12 +242,50 @@ public class RevenueActivity extends AppCompatActivity {
         if (entries.isEmpty()) return;
 
         PieDataSet dataSet = new PieDataSet(entries, "Danh mục");
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-        dataSet.setValueTextSize(12f);
-        dataSet.setValueTextColor(Color.WHITE);
+        
+        // Kết hợp nhiều bảng màu để đa dạng hơn
+        ArrayList<Integer> colors = new ArrayList<>();
+        for (int c : ColorTemplate.VORDIPLOM_COLORS) colors.add(c);
+        for (int c : ColorTemplate.JOYFUL_COLORS) colors.add(c);
+        for (int c : ColorTemplate.COLORFUL_COLORS) colors.add(c);
+        for (int c : ColorTemplate.LIBERTY_COLORS) colors.add(c);
+        for (int c : ColorTemplate.PASTEL_COLORS) colors.add(c);
+        dataSet.setColors(colors);
+
+        // Cấu hình hiển thị Text ra bên ngoài
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        
+        // Đường kẻ chỉ dẫn
+        dataSet.setValueLinePart1OffsetPercentage(80.f);
+        dataSet.setValueLinePart1Length(0.3f);
+        dataSet.setValueLinePart2Length(0.4f);
+        dataSet.setValueTextColor(Color.BLACK); // Màu chữ đen
+        dataSet.setValueTextSize(11f);
 
         PieData pieData = new PieData(dataSet);
+        
+        // Formatter rút gọn số tiền (ví dụ: 1.5M, 500k)
+        pieData.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                if (value >= 1000000) {
+                    return String.format(Locale.getDefault(), "%.1fM", value / 1000000);
+                } else if (value >= 1000) {
+                     return String.format(Locale.getDefault(), "%.0fk", value / 1000);
+                }
+                return String.format(Locale.getDefault(), "%.0f", value);
+            }
+        });
+
         pieChart.setData(pieData);
+        
+        // Cấu hình PieChart
+        pieChart.setEntryLabelColor(Color.BLACK); // Màu tên danh mục
+        pieChart.setEntryLabelTextSize(11f);
+        pieChart.setExtraOffsets(20.f, 0.f, 20.f, 0.f); // Thêm khoảng trắng xung quanh để chứa text
         
         pieChart.getDescription().setEnabled(false);
         pieChart.setCenterText("Doanh thu\ntheo loại");
