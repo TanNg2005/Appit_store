@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -57,6 +58,16 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
         btnGoogleRegister = findViewById(R.id.btnGoogleRegister);
         progressBar = findViewById(R.id.progressBar);
+
+        TextView btnGoToLogin = findViewById(R.id.btnGoToLogin);
+        btnGoToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         // Configure Google Sign In
         // Using the string directly because R.string.default_web_client_id might not be generated yet or properly referenced

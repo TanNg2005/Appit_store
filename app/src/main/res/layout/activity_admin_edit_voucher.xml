@@ -135,6 +135,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="?attr/colorPrimary"
+                app:strokeColor="?attr/colorPrimary"
                 android:text="Ngày bắt đầu" />
 
             <Button
@@ -144,6 +146,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:textColor="?attr/colorPrimary"
+                app:strokeColor="?attr/colorPrimary"
                 android:text="Ngày kết thúc" />
         </LinearLayout>
         

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -127,14 +128,36 @@ public class SettingsActivity extends BaseActivity {
         TextInputEditText etCurrentPass = view.findViewById(R.id.et_current_password);
         TextInputEditText etNewPass = view.findViewById(R.id.et_new_password);
         TextInputEditText etConfirmPass = view.findViewById(R.id.et_confirm_password);
+        Button btnCancel = view.findViewById(R.id.btn_cancel_password);
+        Button btnConfirm = view.findViewById(R.id.btn_confirm_password);
         
-        builder.setPositiveButton("Đổi mật khẩu", null);
-        builder.setNegativeButton("Hủy", null);
+        // Don't set positive/negative buttons on builder
+        // builder.setPositiveButton("Đổi mật khẩu", null);
+        // builder.setNegativeButton("Hủy", null);
         
         AlertDialog dialog = builder.create();
+        
+        // Transparent background if needed for rounded corners
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            // Or better: use a drawable resource for dialog background if corners look sharp
+            // But usually default is fine if CardView/Layout has background
+            view.setBackgroundResource(R.drawable.dialog_background); // Assuming this drawable exists or use simple color
+        }
+        
+        // If dialog_background doesn't exist, let's just use default theme background, 
+        // but since we are inflating custom view, ensure it has a background in XML or here
+        view.setBackgroundResource(android.R.drawable.dialog_holo_light_frame); // Fallback
+        // Actually, best to rely on theme, but let's see. 
+        // The layout file I wrote doesn't have a background set on root LinearLayout.
+        // Let's set a white background programmatically to be safe.
+        view.setBackgroundColor(getResources().getColor(android.R.color.white));
+        
         dialog.show();
         
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        
+        btnConfirm.setOnClickListener(v -> {
             String currentPass = etCurrentPass.getText().toString();
             String newPass = etNewPass.getText().toString();
             String confirmPass = etConfirmPass.getText().toString();

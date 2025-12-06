@@ -1,12 +1,11 @@
 package com.example.appit;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -15,18 +14,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -34,7 +31,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AdminUsersActivity extends BaseActivity {
 
@@ -114,15 +110,24 @@ public class AdminUsersActivity extends BaseActivity {
         TextInputEditText etEmail = view.findViewById(R.id.et_email);
         TextInputEditText etPassword = view.findViewById(R.id.et_password);
         TextInputEditText etName = view.findViewById(R.id.et_name);
+        Button btnCancel = view.findViewById(R.id.btn_cancel_add_user);
+        Button btnConfirm = view.findViewById(R.id.btn_confirm_add_user);
         
-        builder.setPositiveButton("Tạo", null); // Set null initially to override later
-        builder.setNegativeButton("Hủy", null);
-        
+        // Use custom buttons instead of builder buttons
         AlertDialog dialog = builder.create();
+        
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            view.setBackgroundResource(R.drawable.dialog_background); // Optional: if you have a rounded bg
+            // Fallback for background color if drawable missing, to avoid transparent background issues
+            view.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+        }
+        
         dialog.show();
         
-        // Override onClick to prevent closing dialog on error
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        
+        btnConfirm.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
             String name = etName.getText().toString().trim();
@@ -261,6 +266,34 @@ public class AdminUsersActivity extends BaseActivity {
             recyclerView.setVisibility(View.VISIBLE);
         }
     }
+    
+    // Helper method to show confirmation dialog with visible buttons
+    // This solves the issue of white-on-white buttons in AlertDialog
+    private void showConfirmationDialog(String title, String message, String positiveText, View.OnClickListener onPositive) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton(positiveText, null); // Will override listener
+        builder.setNegativeButton("Hủy", null);
+        
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(d -> {
+            // Đặt màu cho nút Positive (Đồng ý/Xóa) thành màu xanh dương
+            // Sử dụng màu purple_500 từ resources (được định nghĩa là #2962FF - xanh dương)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(AdminUsersActivity.this, R.color.purple_500));
+            
+            // Đặt màu cho nút Negative (Hủy) - dùng màu xám đậm
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(AdminUsersActivity.this, android.R.color.darker_gray));
+        });
+        
+        dialog.show();
+        
+        // Set listener after show to access buttons (standard practice)
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            onPositive.onClick(v);
+            dialog.dismiss();
+        });
+    }
 
     private class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.ViewHolder> {
 
@@ -348,7 +381,6 @@ public class AdminUsersActivity extends BaseActivity {
                     if (user.isLocked()) {
                         statusLocked.setVisibility(View.VISIBLE);
                         btnLock.setImageResource(android.R.drawable.ic_partial_secure); // Unlocked icon or similar
-                        // Or keep lock icon but change tint/style? Let's assume lock/unlock toggle
                     } else {
                         statusLocked.setVisibility(View.GONE);
                         btnLock.setImageResource(android.R.drawable.ic_secure);
@@ -362,11 +394,6 @@ public class AdminUsersActivity extends BaseActivity {
 
             // Helper for listener reference
             private void onCheckedChanged(android.widget.CompoundButton buttonView, boolean isChecked) {
-                 // This is just a dummy listener to re-attach, logic is handled inside bind
-                 // Actually we need to re-bind or pass the user context correctly. 
-                 // Simpler approach: The listener in bind captures 'user'
-                 
-                 // Let's correct the bind logic slightly to be cleaner:
                  int pos = getAdapterPosition();
                  if (pos != RecyclerView.NO_POSITION) {
                      User user = users.get(pos);
@@ -378,24 +405,10 @@ public class AdminUsersActivity extends BaseActivity {
                 String action = isNewStateAdmin ? "cấp quyền Admin" : "gỡ quyền Admin";
                 String message = "Bạn có chắc chắn muốn " + action + " cho tài khoản " + user.getEmail() + " không?";
                 
-                // Revert switch visual state first, change it only on success
-                switchAdmin.setOnCheckedChangeListener(null);
-                switchAdmin.setChecked(!isNewStateAdmin);
-                
-                new AlertDialog.Builder(itemView.getContext())
-                    .setTitle("Xác nhận thay đổi quyền")
-                    .setMessage(message)
-                    .setPositiveButton("Đồng ý", (dialog, which) -> {
-                        updateUserRole(user, isNewStateAdmin);
-                    })
-                    .setNegativeButton("Hủy", (dialog, which) -> {
-                        // Just re-attach listener, state is already reverted
-                        switchAdmin.setOnCheckedChangeListener((btn, checked) -> confirmUpdateAdminRole(user, checked));
-                    })
-                    .setOnCancelListener(dialog -> {
-                        switchAdmin.setOnCheckedChangeListener((btn, checked) -> confirmUpdateAdminRole(user, checked));
-                    })
-                    .show();
+                // Use custom confirmation dialog helper
+                showConfirmationDialog("Xác nhận thay đổi quyền", message, "Đồng ý", v -> {
+                    updateUserRole(user, isNewStateAdmin);
+                });
             }
 
             private void updateUserRole(User user, boolean isAdmin) {
@@ -409,8 +422,8 @@ public class AdminUsersActivity extends BaseActivity {
                         loadUsers(); 
                     })
                     .addOnFailureListener(e -> {
-                        // Revert visual state if failed (though it should be in correct state before call)
-                         if (switchAdmin.getVisibility() == View.VISIBLE) {
+                        // Revert visual state if failed
+                        if (switchAdmin.getVisibility() == View.VISIBLE) {
                              switchAdmin.setOnCheckedChangeListener(null);
                              switchAdmin.setChecked(!isAdmin); 
                              switchAdmin.setOnCheckedChangeListener((btn, checked) -> confirmUpdateAdminRole(user, checked));
@@ -422,13 +435,11 @@ public class AdminUsersActivity extends BaseActivity {
             private void confirmToggleUserLock(User user) {
                  boolean newLockState = !user.isLocked();
                  String action = newLockState ? "khóa" : "mở khóa";
+                 String message = "Bạn có chắc chắn muốn " + action + " tài khoản " + user.getEmail() + " không?";
                  
-                 new AlertDialog.Builder(itemView.getContext())
-                    .setTitle("Xác nhận " + action + " tài khoản")
-                    .setMessage("Bạn có chắc chắn muốn " + action + " tài khoản " + user.getEmail() + " không?")
-                    .setPositiveButton("Đồng ý", (dialog, which) -> toggleUserLock(user))
-                    .setNegativeButton("Hủy", null)
-                    .show();
+                 showConfirmationDialog("Xác nhận " + action + " tài khoản", message, "Đồng ý", v -> {
+                     toggleUserLock(user);
+                 });
             }
             
             private void toggleUserLock(User user) {
@@ -446,19 +457,13 @@ public class AdminUsersActivity extends BaseActivity {
             }
             
             private void confirmDeleteUser(User user) {
-                new AlertDialog.Builder(itemView.getContext())
-                    .setTitle("Xóa người dùng")
-                    .setMessage("Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản " + user.getEmail() + " không? Hành động này không thể hoàn tác.")
-                    .setPositiveButton("Xóa", (dialog, which) -> deleteUser(user))
-                    .setNegativeButton("Hủy", null)
-                    .show();
+                String message = "Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản " + user.getEmail() + " không? Hành động này không thể hoàn tác.";
+                showConfirmationDialog("Xóa người dùng", message, "Xóa", v -> {
+                    deleteUser(user);
+                });
             }
             
             private void deleteUser(User user) {
-                // Note: Deleting from Firestore doesn't delete from Firebase Auth automatically.
-                // For a complete delete, you'd ideally use Cloud Functions or an Admin SDK backend.
-                // Here we just delete the user record from Firestore.
-                
                 db.collection("users").document(user.getUid())
                     .delete()
                     .addOnSuccessListener(aVoid -> {
